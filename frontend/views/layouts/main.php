@@ -3,6 +3,10 @@
 use yii\helpers\Html;
 use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
+use common\models\Banner;
+
+$banners = Banner::find()->where(['status' => 1])->all();
+
 
 AppAsset::register($this);
 ?>
@@ -46,13 +50,31 @@ AppAsset::register($this);
     </nav>
 
     <!-- BANNER -->
-    <?php if (Yii::$app->controller->id == 'site' && Yii::$app->controller->action->id == 'index'): ?>
-        <div class="bg-success text-white text-center py-5 mb-4" style="background: url('/images/banner.jpg') center/cover no-repeat; min-height: 300px;">
-            <div class="bg-dark bg-opacity-50 p-5">
-                <h1 class="display-4 fw-bold">Chào mừng đến Rau Củ Online</h1>
-                <p class="lead">Nơi cung cấp rau củ sạch, tươi ngon mỗi ngày 🥕🥬</p>
-                <a href="/product/index" class="btn btn-warning btn-lg">Mua ngay</a>
+
+    <?php if ($banners): ?>
+        <div id="mainBanner" class="carousel slide mb-4" data-bs-ride="carousel" data-bs-interval="3000">
+            <div class="carousel-inner">
+                <?php foreach ($banners as $i => $banner): ?>
+                    <div class="carousel-item <?= $i === 0 ? 'active' : '' ?>">
+                        <a href="<?= $banner->link ?: '#' ?>">
+                            <div class="d-flex align-items-center justify-content-center text-white text-center"
+                                style="background: url('<?= $banner->image ?>') center/cover no-repeat; min-height: 300px;">
+                                <div class="bg-dark bg-opacity-50 p-5">
+                                    <h1 class="display-5 fw-bold"><?= $banner->title ?></h1>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                <?php endforeach; ?>
             </div>
+
+            <!-- Nút điều khiển -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#mainBanner" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#mainBanner" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
         </div>
     <?php endif; ?>
 
