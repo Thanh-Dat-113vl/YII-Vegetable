@@ -11,7 +11,7 @@ $this->title = "Giỏ hàng";
 
 <?php if (empty($cart)): ?>
     <div class="alert alert-info">Giỏ hàng đang trống.
-        <?= Html::a("Mua ngay", ['/product/index'], ['class' => 'btn btn-success ms-3']) ?>
+        <?= Html::a("Mua ngay", ['site/index'], ['class' => 'btn btn-success ms-3']) ?>
     </div>
 <?php else: ?>
     <form method="post" action="/cart/checkout">

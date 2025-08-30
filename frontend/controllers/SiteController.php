@@ -10,11 +10,12 @@ use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use common\models\LoginForm;
+use frontend\models\LoginForm;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
+
 
 /**
  * Site controller
@@ -24,6 +25,19 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
+
+    public function actionTest()
+    {
+        $user = \common\models\User::findByUsername('dat'); // user của bạn
+        if (!$user) {
+            return 'Không tìm thấy user';
+        }
+
+        $ok = Yii::$app->security->validatePassword('12345678', $user->password_hash);
+        return $ok ? 'Pass đúng' : 'Sai pass';
+    }
+
+
     public function behaviors()
     {
         return [
@@ -92,6 +106,10 @@ class SiteController extends Controller
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
+        } else {
+            //debug lỗi
+
+            // var_dump($model->getErrors());die;
         }
 
         $model->password = '';
@@ -255,5 +273,15 @@ class SiteController extends Controller
         return $this->render('resendVerificationEmail', [
             'model' => $model
         ]);
+    }
+
+    public function actionCart()
+    {
+        return $this->render('cart');
+    }
+
+    public function actionProduct()
+    {
+        return $this->render('product');
     }
 }
