@@ -32,7 +32,8 @@ class Category extends ActiveRecord
             [['name'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'slug'], 'string', 'max' => 255],
-            [['slug'], 'unique'],
+            ['name', 'unique', 'targetAttribute' => 'name', 'message' => 'Tên danh mục đã tồn tại.'],
+            [['slug'], 'unique', 'targetAttribute' => 'slug', 'message' => 'Slug đã tồn tại.'],
             [['status', 'created_by'], 'integer'],
         ];
     }
