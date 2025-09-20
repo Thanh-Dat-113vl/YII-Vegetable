@@ -18,7 +18,7 @@ $this->title = 'Cập nhật Danh mục: ' . $model->name;
     ]) ?>
     <div class="form-group mt-3">
         <?= Html::submitButton('Lưu thay đổi', ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('<i class="bi bi-arrow-left"></i> Quay lại', ['index'], [
+        <?= Html::a('<i class="bi bi-arrow-left"></i> Back', ['index'], [
             'class' => 'btn btn-secondary ms-2'
         ]) ?>
     </div>

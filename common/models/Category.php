@@ -42,12 +42,12 @@ class Category extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Tên danh mục',
+            'name' => 'Name Category',
             'slug' => 'Slug',
-            'status' => 'Trạng thái',
-            'created_by' => 'Người tạo',
-            'created_at' => 'Ngày tạo',
-            'updated_at' => 'Ngày cập nhật',
+            'status' => 'Status',
+            'created_by' => 'User Created',
+            'created_at' => 'Date Created',
+            'updated_at' => 'Date Updated',
         ];
     }
 

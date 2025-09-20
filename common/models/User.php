@@ -61,8 +61,70 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
             [['username', 'email'], 'required'],
             [['username', 'email', 'password_hash', 'auth_key', 'verification_token'], 'string', 'max' => 255],
             ['email', 'email'],
+
+            ['password', 'required', 'message' => 'Vui lòng nhập mật khẩu.'],
+            ['password', 'string', 'min' => 8, 'tooShort' => 'Mật khẩu phải có ít nhất 8 ký tự.'],
+            ['password', 'match', 'pattern' => '/[A-Z]/', 'message' => 'Mật khẩu phải chứa ít nhất một chữ cái viết hoa.'],
+            ['password', 'match', 'pattern' => '/[a-z]/', 'message' => 'Mật khẩu phải chứa ít nhất một chữ cái viết thường.'],
+            ['password', 'match', 'pattern' => '/\d/', 'message' => 'Mật khẩu phải chứa ít nhất một chữ số.'],
+            ['password', 'match', 'pattern' => '/[\W_]/', 'message' => 'Mật khẩu phải chứa ít nhất một ký tự đặc biệt.'],
+            // [
+            //     'password',
+            //     'match',
+            //     'pattern' => '/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/',
+            //     'message' => 'Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ, số và ký tự đặc biệt.'
+            // ],
+
+            ['status', 'default', 'value' => self::STATUS_ACTIVE],
+            ['role', 'default', 'value' => 2], // Mặc định là customer
+            ['role', 'in', 'range' => [0, 1, 2]],
+            ['role', 'integer'],
+
+            [['created_at', 'updated_at'], 'safe'],
+
+            [['username'], 'unique', 'targetAttribute' => 'username', 'message' => 'Tên đăng nhập đã tồn tại.'],
+            [['email'], 'unique', 'targetAttribute' => 'email', 'message' => 'Email đã tồn tại.'],
+            [['password_reset_token'], 'unique', 'targetAttribute' => 'password_reset_token'],
+
+
         ];
     }
+    public function actionIndex()
+    {
+        $query = \common\models\User::find();
+
+        $search = Yii::$app->request->get('username');
+        if (!empty($search)) {
+            $query->andWhere(['like', 'username', $search]);
+        }
+
+        $dataProvider = new \yii\data\ActiveDataProvider([
+            'query' => $query,
+            'pagination' => ['pageSize' => 10],
+        ]);
+
+        return $this->render('index', [
+            'dataProvider' => $dataProvider,
+            'search' => $search,
+        ]);
+    }
+
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->isNewRecord) {
+                $this->auth_key = Yii::$app->security->generateRandomString();
+            }
+
+            if (!empty($this->password)) {
+                $this->password_hash = Yii::$app->security->generatePasswordHash($this->password);
+            }
+            return true;
+        }
+        return false;
+    }
+
 
     /**
      * {@inheritdoc}
@@ -92,7 +154,7 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
         return static::find()
             ->where(['username' => $username])
             ->orWhere(['email' => $username])
-            ->one();
+            ->all();
     }
 
     /**
@@ -184,6 +246,9 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
      *
      * @param string $password
      */
+
+    public  $password;
+
     public function setPassword($password)
     {
         $this->password_hash = Yii::$app->security->generatePasswordHash($password);

@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var $model common\models\Category */
-$this->title = 'Thêm Danh mục';
+$this->title = 'Add New Category';
 ?>
 <div class="category-create">
     <h1><?= Html::encode($this->title) ?></h1>
@@ -19,7 +19,7 @@ $this->title = 'Thêm Danh mục';
         ])->textInput([
             'maxlength' => true,
             'class' => 'form-control',
-            'placeholder' => 'Nhập tên danh mục...',
+            'placeholder' => 'name of category',
         ]) ?>
     </div>
 
@@ -37,8 +37,8 @@ $this->title = 'Thêm Danh mục';
         <?= $form->field($model, 'status', [
             'labelOptions' => ['class' => 'form-label fw-semibold'],
         ])->dropDownList([
-            1 => '✅ Hiển thị',
-            0 => '🚫 Ẩn'
+            1 => '✅ Show',
+            0 => '🚫 Hide'
         ], ['class' => 'form-select']) ?>
     </div>
 
@@ -46,7 +46,7 @@ $this->title = 'Thêm Danh mục';
         <?= Html::submitButton('<i class="bi bi-save"></i> Lưu', [
             'class' => 'btn btn-success px-4'
         ]) ?>
-        <?= Html::a('<i class="bi bi-arrow-left"></i> Quay lại', ['index'], [
+        <?= Html::a('<i class="bi bi-arrow-left"></i> Back', ['index'], [
             'class' => 'btn btn-secondary ms-2'
         ]) ?>
     </div>
