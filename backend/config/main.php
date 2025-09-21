@@ -12,18 +12,43 @@ return [
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
     'modules' => [],
+    'as access' => [
+        'class' => 'yii\filters\AccessControl',
+        'rules' => [
+            [
+            'allow' => true,
+            'roles' => ['@'], // chỉ user đã login
+            'matchCallback' => function ($rule, $action) {
+                return in_array(\Yii::$app->user->identity->role,[0, 1]);
+             }
+         ],
+     ],
+    ],
+
     'components' => [
         'request' => [
-            'csrfParam' => '_csrf-backend',
+            'csrfParam' => '_csrf-common',
+            'cookieValidationKey' => 'your-key', // Đảm bảo giống frontend
+            'csrfCookie' => [
+                'httpOnly' => true,
+                'domain' => '.localhost', // hoặc domain thật của bạn
+            ],
         ],
         'user' => [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,
-            'identityCookie' => ['name' => '_identity-backend', 'httpOnly' => true],
+            'identityCookie' => [
+                'name' => '_identity-common',
+                'httpOnly' => true,
+                'domain' => '.localhost', // hoặc domain thật của bạn
+            ],
         ],
         'session' => [
-            // this is the name of the session cookie used for login on the backend
-            'name' => 'advanced-backend',
+            'name' => 'advanced-common',
+            'cookieParams' => [
+                'httpOnly' => true,
+                'domain' => '.localhost', // hoặc domain thật của bạn
+            ],
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,

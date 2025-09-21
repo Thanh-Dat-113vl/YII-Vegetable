@@ -20,20 +20,17 @@ class SiteController extends Controller
     public function behaviors()
     {
         return [
+
             'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'actions' => ['login', 'error'],
-                        'allow' => true,
-                    ],
-                    [
-                        'actions' => ['logout', 'index'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
+            'class' => \yii\filters\AccessControl::class,
+            'only' => ['logout', 'index', 'create', 'update', 'delete'],
+            'rules' => [
+                [
+                    'allow' => true,
+                    'roles' => ['@'], // chỉ cho user đã login
                 ],
             ],
+        ],
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
@@ -72,22 +69,37 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
+        // if (!Yii::$app->user->isGuest) {
+        //     return $this->goHome();
+        // }
+
+        // $this->layout = 'blank';
+
+        // $model = new LoginForm();
+        // if ($model->load(Yii::$app->request->post()) && $model->login()) {
+        //     return $this->goBack();
+        // }
+
+        // $model->password = '';
+
+        // return $this->render('login', [
+        //     'model' => $model,
+        // ]);
+
+          // Nếu đã đăng nhập và đúng role thì vào thẳng trang chủ backend
+            if (Yii::$app->user->isGuest) {
+            throw new NotFoundHttpException();
         }
 
-        $this->layout = 'blank';
-
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+        // Chỉ role 0 và 1 được vào
+        $role = Yii::$app->user->identity->role;
+        if (!in_array($role, [0, 1])) {
+            throw new NotFoundHttpException();
         }
 
-        $model->password = '';
+        return parent::beforeAction($action);
+    }
 
-        return $this->render('login', [
-            'model' => $model,
-        ]);
     }
 
     /**
@@ -101,4 +113,26 @@ class SiteController extends Controller
 
         return $this->goHome();
     }
+
+    public function beforeAction($action)
+{
+    if (Yii::$app->user->isGuest) {
+        throw new \yii\web\NotFoundHttpException('Page not found.');
+    }
+    $role = Yii::$app->user->identity->role;
+
+    if (!in_array($role, [0, 1])) {
+        throw new \yii\web\NotFoundHttpException('Page not found.');
+    }
+
+    return parent::beforeAction($action);
+
+    // if (Yii::$app->user->isGuest || !in_array(Yii::$app->user->identity->role, [0,1])) {
+    //     Yii::$app->user->logout();
+    //     return $this->redirect('http://localhost:8080'); // về frontend
+    // }
+
+    // return true;
+}
+
 }

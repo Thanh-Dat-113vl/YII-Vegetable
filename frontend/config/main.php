@@ -12,11 +12,7 @@ return [
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
-        'user' => [
-            'identityClass' => 'common\models\User',
-            'enableAutoLogin' => true,
-            'identityCookie' => ['username' => '_frontendUser', 'httpOnly' => true],
-        ],
+       
         'request' => [
             'csrfParam' => '_csrf-frontend',
         ],

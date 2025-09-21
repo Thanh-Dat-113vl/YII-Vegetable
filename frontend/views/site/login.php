@@ -31,7 +31,7 @@ $this->title = 'Đăng nhập';
 
         <hr>
         <p class="text-center">
-            Chưa có tài khoản? <?= Html::a('Đăng ký ngay', ['/site/register']) ?>
+            Chưa có tài khoản? <?= Html::a('Đăng ký ngay', ['/site/signup']) ?>
         </p>
     </div>
 </div>
