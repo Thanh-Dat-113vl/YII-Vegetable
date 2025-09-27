@@ -23,6 +23,15 @@ $this->title = 'Manage Users Accounts';
                 <i class="bi bi-search"></i> Tìm kiếm
             </button>
         </div>
+
+        <p>
+            <?= \yii\helpers\Html::a('📧 Test Mail', ['site/test-mail'], [
+                'class' => 'btn btn-primary',
+                'data-method' => 'post'
+            ]) ?>
+        </p>
+
+
     </form>
 
     <?= GridView::widget([
@@ -66,12 +75,13 @@ $this->title = 'Manage Users Accounts';
             ],
 
             [
-                'attribute' => 'Reset Password',
+                'attribute' => 'password',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    return Html::a('Reset', ['reset-password', 'id' => $model->id], [
+                    return Html::button('Reset', [
                         'class' => 'btn btn-warning btn-sm',
                         'data-method' => 'post',
+                        'data-id' => $model->id,
                         'data-confirm' => 'Are you sure you want to reset the password for this user?',
                     ]);
                 },

@@ -6,5 +6,10 @@ $this->title = 'Trang Admin';
 ?>
 <div class="site-index">
     <div>
-        <a>Hello Admin</a>
+        <p>
+            <?= \yii\helpers\Html::a('📧 Test Mail', ['site/test-mail'], [
+                'class' => 'btn btn-primary',
+                'data-method' => 'post'
+            ]) ?>
+        </p>
     </div>

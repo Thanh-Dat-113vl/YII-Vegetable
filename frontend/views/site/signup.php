@@ -7,7 +7,7 @@
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 
-$this->title = 'Signup';
+$this->title = 'Signup Account';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-signup">
@@ -19,17 +19,30 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-lg-5">
             <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
 
-                <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+            <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
 
-                <?= $form->field($model, 'email') ?>
+            <?= $form->field($model, 'email') ?>
 
-                <?= $form->field($model, 'password')->passwordInput() ?>
+            <?= $form->field($model, 'phone')->textInput([
+                'maxlength' => 10,
+                'placeholder' => 'Số điện thoại',
+                'pattern' => '0[0-9]{9}',
+                'title' => 'Vui lòng nhập đúng định dạng số điện thoại (10 chữ số).',
+                'inputmode' => 'numeric',
+            ]) ?>
 
-                <div class="form-group">
-                    <?= Html::submitButton('Signup', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
-                </div>
+            <?= $form->field($model, 'password')->passwordInput() ?>
+
+            <div class="form-group">
+                <?= Html::submitButton('Signup', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+            </div>
 
             <?php ActiveForm::end(); ?>
+
+
+
+
+
         </div>
     </div>
 </div>

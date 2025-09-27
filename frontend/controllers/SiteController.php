@@ -26,17 +26,6 @@ class SiteController extends Controller
      * {@inheritdoc}
      */
 
-    public function actionTest()
-    {
-        $user = \common\models\User::findByUsername('dat'); // user của bạn
-        if (!$user) {
-            return 'Không tìm thấy user';
-        }
-
-        $ok = Yii::$app->security->validatePassword('12345678', $user->password_hash);
-        return $ok ? 'Pass đúng' : 'Sai pass';
-    }
-
 
     public function behaviors()
     {
@@ -172,15 +161,20 @@ class SiteController extends Controller
     public function actionSignup()
     {
         $model = new SignupForm();
-        if ($model->load(Yii::$app->request->post()) && $model->signup()) {
-            Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
-            return $this->goHome();
+
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->signup()) {
+                Yii::$app->session->setFlash('success', 'Đăng ký thành công!');
+                return $this->goHome();
+                // $this->redirect(['site/login'])
+            }
         }
 
         return $this->render('signup', [
             'model' => $model,
         ]);
     }
+
 
     /**
      * Requests password reset.

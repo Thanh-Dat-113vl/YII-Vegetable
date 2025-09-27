@@ -73,7 +73,7 @@ AppAsset::register($this);
                     <!--DK user đăng nhập là admin thì hiện link admin -->
                     <?php if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role == 0): ?>
                         <li class="nav-item">
-                            <?= Html::a('Admin', 'http://localhost:8080/', ['class' => 'nav-link', 'target' => '_blank']) ?>
+                            <?= Html::a('Admin', 'http://localhost:8000/', ['class' => 'nav-link', 'target' => '_blank']) ?>
                         </li>
                     <?php endif; ?>
                 </ul>
@@ -91,7 +91,7 @@ AppAsset::register($this);
 
     <!-- FOOTER -->
     <footer class="bg-dark text-white text-center py-4">
-        <p>&copy; <?= date('Y') ?> Rau Củ Online. All rights reserved.</p>
+        <p>&copy; <?= date('Y') ?> Rau Củ Online. CTD.</p>
         <p>
             <a href="/site/about" class="text-white me-3">Về chúng tôi</a>
             <a href="/site/contact" class="text-white">Liên hệ</a>
@@ -100,6 +100,33 @@ AppAsset::register($this);
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <?php $this->endBody() ?>
+
+
+    <?php if (Yii::$app->session->hasFlash('success')): ?>
+        <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content shadow-lg border-0">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title"><i class="bi bi-check-circle-fill me-2"></i>Thông báo</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center p-4">
+                        <h4 class="text-success mb-3">🎉 Đăng ký thành công!</h4>
+                        <p>Bạn có thể đăng nhập để trải nghiệm hệ thống ngay.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="<?= \yii\helpers\Url::to(['site/login']) ?>" class="btn btn-success">Đăng nhập</a>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+        </script>
+    <?php endif; ?>
 </body>
 
 </html>

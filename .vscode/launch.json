@@ -1,0 +1,69 @@
+{
+  "version": "0.2.0",
+  
+  "configurations": [
+    
+    {
+      "name": "Run Yii2 Advanced (frontend)",
+      "type": "php",
+      "request": "launch",
+      "runtimeArgs": [
+        "-dxdebug.mode=debug",
+        "-dxdebug.start_with_request=yes",
+        "-S",
+        "localhost:8080",
+        "-t",
+        "frontend/web"
+      ],
+      "program": "",
+      "cwd": "${workspaceFolder}",
+      "port": 9003,
+            "skipFiles": [
+        "${workspaceFolder}/vendor/**/*.php",
+        "${workspaceFolder}/console/migrations/**/*.php",
+        "${workspaceFolder}/runtime/**/*.php",
+      ],
+
+      "serverReadyAction": {
+        "pattern": "Development Server \\(http://localhost:([0-9]+)\\) started",
+        "uriFormat": "http://localhost:%s",
+        "action": "openExternally"
+      }
+    },
+
+
+    {
+      "name": "Run Yii2 Advanced (backend)",
+      "type": "php",
+      "request": "launch",
+      "runtimeArgs": [
+        "-dxdebug.mode=debug",
+        "-dxdebug.start_with_request=yes",
+        "-S",
+        "localhost:8081",
+        "-t",
+        "backend/web"
+      ],
+      "program": "",
+      "cwd": "${workspaceFolder}",
+      "port": 9003,
+            "skipFiles": [
+        "${workspaceFolder}/vendor/**/*.php",
+        "${workspaceFolder}/console/migrations/**/*.php",
+        "${workspaceFolder}/runtime/**/*.php"
+      ],
+
+      "serverReadyAction": {
+        "pattern": "Development Server \\(http://localhost:([0-9]+)\\) started",
+        "uriFormat": "http://localhost:%s",
+        "action": "openExternally"
+      }
+    },
+    {
+      "name": "Listen for Xdebug (manual run)",
+      "type": "php",
+      "request": "launch",
+      "port": 9003
+    }
+  ]
+}

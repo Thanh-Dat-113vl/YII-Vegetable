@@ -57,6 +57,7 @@ xdebug.remote_autostart=1
 EOF
 echo "Done!"
 
+
 info "Configure NGINX"
 sed -i 's/user www-data/user vagrant/g' /etc/nginx/nginx.conf
 echo "Done!"

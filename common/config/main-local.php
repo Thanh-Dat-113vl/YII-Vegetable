@@ -12,17 +12,10 @@ return [
         'mailer' => [
             'class' => \yii\symfonymailer\Mailer::class,
             'viewPath' => '@common/mail',
-            // send all mails to a file by default.
-            // 'useFileTransport' => true,
-            // You have to set
-            //
             'useFileTransport' => false,
-            //
-            // and configure a transport for the mailer to send real emails.
-            //
-            // SMTP server example:
+
             'transport' => [
-                'class' => 'Swift_SmtpTransport',
+                'class' => Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport::class,
 
                 'scheme' => 'smtps',
                 'host' => 'smtp.gmail.com',

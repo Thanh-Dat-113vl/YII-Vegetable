@@ -21,12 +21,18 @@ use yii\db\ActiveRecord;
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $password write-only password
+ * @property integer $role
+
  */
 class User extends ActiveRecord implements \yii\web\IdentityInterface
 {
     const STATUS_DELETED = 0;
     const STATUS_INACTIVE = 9;
     const STATUS_ACTIVE = 10;
+
+    const ROLE_ADMIN = 0;
+    const ROLE_EMLOYEE = 1;
+    const ROLE_CUSTOMER = 2;
 
 
     /**
@@ -58,33 +64,26 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'email'], 'required'],
+            [['username', 'email', 'password_hash', 'auth_key', 'role', 'status', 'phone'], 'required'],
             [['username', 'email', 'password_hash', 'auth_key', 'verification_token'], 'string', 'max' => 255],
             ['email', 'email'],
-
-            ['password', 'required', 'message' => 'Vui lòng nhập mật khẩu.'],
-            ['password', 'string', 'min' => 8, 'tooShort' => 'Mật khẩu phải có ít nhất 8 ký tự.'],
-            ['password', 'match', 'pattern' => '/[A-Z]/', 'message' => 'Mật khẩu phải chứa ít nhất một chữ cái viết hoa.'],
-            ['password', 'match', 'pattern' => '/[a-z]/', 'message' => 'Mật khẩu phải chứa ít nhất một chữ cái viết thường.'],
-            ['password', 'match', 'pattern' => '/\d/', 'message' => 'Mật khẩu phải chứa ít nhất một chữ số.'],
-            ['password', 'match', 'pattern' => '/[\W_]/', 'message' => 'Mật khẩu phải chứa ít nhất một ký tự đặc biệt.'],
-            // [
+            ['phone', 'string', 'max' => 10],
+            [['phone'], 'unique', 'targetAttribute' => 'phone', 'message' => 'Số điện thoại đã tồn tại.'],
             //     'password',
             //     'match',
             //     'pattern' => '/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/',
             //     'message' => 'Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ, số và ký tự đặc biệt.'
             // ],
-
+            [['role', 'status'], 'integer'],
+            ['role', 'default', 'value' => self::ROLE_CUSTOMER],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['role', 'default', 'value' => 2], // Mặc định là customer
-            ['role', 'in', 'range' => [0, 1, 2]],
-            ['role', 'integer'],
+
 
             [['created_at', 'updated_at'], 'safe'],
 
             [['username'], 'unique', 'targetAttribute' => 'username', 'message' => 'Tên đăng nhập đã tồn tại.'],
             [['email'], 'unique', 'targetAttribute' => 'email', 'message' => 'Email đã tồn tại.'],
-            [['password_reset_token'], 'unique', 'targetAttribute' => 'password_reset_token'],
+            // [['password_reset_token'], 'unique', 'targetAttribute' => 'password_reset_token'],
 
 
         ];
@@ -114,11 +113,18 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     {
         if (parent::beforeSave($insert)) {
             if ($this->isNewRecord) {
-                $this->auth_key = Yii::$app->security->generateRandomString();
-            }
 
-            if (!empty($this->password)) {
-                $this->password_hash = Yii::$app->security->generatePasswordHash($this->password);
+                if ($this->role === null) {
+                    $this->role = self::ROLE_CUSTOMER;  // default
+                }
+
+                if ($this->status === null) {
+                    $this->status = self::STATUS_ACTIVE; // default
+                }
+
+                $this->auth_key = Yii::$app->security->generateRandomString();
+                $this->created_at = date('Y-m-d H:i:s');
+                $this->updated_at = date('Y-m-d H:i:s');
             }
             return true;
         }
@@ -148,14 +154,25 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
      * @param string $username
      * @return static|null
      */
+    // public static function findByUsername($username)
+    // {
+    //     // return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
+    //     return static::find()
+    //         ->where(['username' => $username])
+    //         ->orWhere(['email' => $username])
+    //         ->all();
+    // }
     public static function findByUsername($username)
     {
-        // return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
-        return static::find()
-            ->where(['username' => $username])
-            ->orWhere(['email' => $username])
-            ->all();
+        return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
+
+        // foreach (self::$usernames as $user) {
+        //     if (strcasecmp($user['username'], $username) === 0 || strcasecmp($user['email'], $username) === 0) {
+        //         return new static($user);
+        //     }
+        // }
     }
+
 
     /**
      * Finds user by password reset token 
@@ -185,7 +202,7 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     {
         return static::findOne([
             'verification_token' => $token,
-            'status' => self::STATUS_INACTIVE
+            'status' => self::STATUS_ACTIVE
         ]);
     }
 
@@ -240,6 +257,7 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     {
         return Yii::$app->security->validatePassword($password, $this->password_hash);
     }
+
 
     /**
      * Generates password hash from password and sets it to the model

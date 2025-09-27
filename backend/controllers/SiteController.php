@@ -8,6 +8,8 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
+use common\components\MailerHelper;
+
 
 /**
  * Site controller
@@ -24,7 +26,7 @@ class SiteController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['login', 'error'],
+                        'actions' => ['login', 'error', 'test-mail'],
                         'allow' => true,
                     ],
                     [
@@ -53,6 +55,29 @@ class SiteController extends Controller
                 'class' => \yii\web\ErrorAction::class,
             ],
         ];
+    }
+
+    public function actionTestMail()
+    {
+        $error = '';
+        $sent = MailerHelper::send(
+            [
+                'caothanhdat113vl@gmail.com' => 'Dat-Cao',
+                'ThanhDat-Cao@vn.apachefootwear.com' => 'Apache-VN'
+            ],
+            'Test mail from Yii2 Backend',
+            '<h3>Xin chào!</h3><p>Đây là email test gửi từ Yii2 backend.</p>',
+            null,
+            $error
+        );
+
+        if ($sent) {
+            Yii::$app->session->setFlash('success', '✅ Mail đã được gửi thành công!');
+        } else {
+            Yii::$app->session->setFlash('error', '❌ Gửi mail thất bại!');
+        }
+
+        return $this->redirect(['index']); // quay lại trang index của backend
     }
 
     /**
