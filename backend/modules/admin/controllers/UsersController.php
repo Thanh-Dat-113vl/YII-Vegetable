@@ -7,6 +7,7 @@ use yii\web\Controller;
 use yii\data\ActiveDataProvider;
 use common\models\User;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 use yii\helpers\Inflector;
 use common\components\MailerHelper;
 
@@ -65,37 +66,40 @@ class UsersController extends Controller
     }
 
     public function actionResetPassword($id)
-    {
-        // $user = User::findOne($id);
-        $user = $this->findModel($id);
+{
+    $user = $this->findModel($id);
 
-        if (!$user) {
-            throw new NotFoundHttpException("User not found");
-        }
+    $newPassword = Yii::$app->security->generateRandomString(8);
+    $user->setPassword($newPassword);
 
-        $newPassword = Yii::$app->security->generateRandomString(8);
-        $user->setPassword($newPassword);
-
-
-        if ($user->save(false)) {
-            // Gửi email cho user
-            Yii::$app->mailer->compose()
+    if ($user->save(false)) {
+        try {
+            $sent = Yii::$app->mailer->compose()
                 ->setTo($user->email)
-                ->setFrom([Yii::$app->params['adminEmail'] => 'Admin'])
+                ->setFrom(['caothanhdat113vl@gmail.com' => 'Admin'])
                 ->setSubject('Mật khẩu mới của bạn')
                 ->setHtmlBody("
-                <p>Xin chào <b>{$user->username}</b>,</p>
-                <p>Mật khẩu mới của bạn là: <b>{$newPassword}</b></p>
-                <p>Vui lòng đăng nhập và đổi lại mật khẩu.</p>
-            ")
+                    <p>Xin chào <b>{$user->username}</b>,</p>
+                    <p>Mật khẩu mới của bạn là: <b>{$newPassword}</b></p>
+                    <p>Vui lòng đăng nhập và đổi lại mật khẩu.</p>
+                ")
                 ->send();
-            Yii::$app->session->setFlash('success', 'Mật khẩu đã được reset và gửi tới email người dùng.');
-        } else {
-            Yii::$app->session->setFlash('error', 'Không thể reset mật khẩu.');
-        }
 
-        return $this->redirect(['index']);
+            if ($sent) {
+                Yii::$app->session->setFlash('success', "Mật khẩu đã được reset và gửi tới email <b>{$user->email}</b>.");
+            } else {
+                Yii::$app->session->setFlash('warning', 'Mật khẩu đã reset nhưng không gửi được email.');
+            }
+        } catch (\Throwable $e) {
+            Yii::$app->session->setFlash('error', 'Reset thành công nhưng lỗi gửi mail: ' . $e->getMessage());
+        }
+    } else {
+        Yii::$app->session->setFlash('error', 'Không thể reset mật khẩu.');
     }
+
+    return $this->redirect(['index']);
+}
+
 
     public function actionDelete($id)
     {
@@ -131,21 +135,23 @@ class UsersController extends Controller
 
     public function actionTestMail()
     {
-        $sent = MailerHelper::send(
-            [
-                'caothanhdat113vl@gmail.com' => 'Dat Cao',
-                'ThanhDat-Cao@vn.apachefootwear.com' => 'Apache VN'
-            ],
-            'Test mail from Yii2 Backend',
-            '<h3>Xin chào!</h3><p>Đây là email test gửi từ Yii2 backend.</p>'
-        );
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        try{
 
-        if ($sent) {
-            Yii::$app->session->setFlash('success', '✅ Mail đã được gửi thành công!');
-        } else {
-            Yii::$app->session->setFlash('error', '❌ Gửi mail thất bại!');
+        Yii::$app->mailer->compose()
+        ->setTo('caothanh113vl@gmail.com')
+        ->setFrom(['caothanhdat113vl@gmail.com' => 'admin'])
+        ->setSubject('Test mail from Yii2 Backend')
+        ->setHtmlBody('<h3>Xin chào!</h3><p>Đây là email test gửi từ Yii2 backend.</p>')
+        ->send();
+
+
+        return ['success' => true, 'message' => '✅ Mail đã được gửi thành công!'];
+        } catch (\Throwable $e) {
+            return ['success' => false, 'message' => '❌ Gửi mail thất bại! Lỗi: ' . $e->getMessage()];
         }
+    
 
-        return $this->redirect(['index']);
+    return $this->redirect(['index']);
     }
 }

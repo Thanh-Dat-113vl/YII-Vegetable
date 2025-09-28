@@ -6,29 +6,26 @@ return [
             'class' => \yii\db\Connection::class,
             'dsn' => 'mysql:host=127.0.0.1;dbname=QLRC',
             'username' => 'root',
-            'password' => 'Aa123456',
+            'password' => '12345678',
             'charset' => 'utf8',
         ],
         'mailer' => [
-            'class' => \yii\symfonymailer\Mailer::class,
-            'viewPath' => '@common/mail',
-            'useFileTransport' => false,
+    'class' => \yii\symfonymailer\Mailer::class,
+    'viewPath' => '@common/mail',
+    'useFileTransport' => false,
+    'transport' => [
+        'scheme' => 'smtp',
+        'host' => 'smtp.gmail.com',
+        'username' => 'caothanhdat113vl@gmail.com',
+        'password' => 'xfuxxbkzfakiqfcd', // App Password Gmail
+        'port' => 587,
+        'encryption' => 'tls',
+    ],
 
-            'transport' => [
-                'class' => Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport::class,
-
-                'scheme' => 'smtps',
-                'host' => 'smtp.gmail.com',
-                'username' => 'caothanhdat113vl@gmail.com',
-                'password' => 'xfux xbkz faki qfcd',
-                'port' => 587,
-                'encryption' => 'tls',
-                // 'dsn' => 'native://default',
-            ],
             //
             // DSN example:
-            //    'transport' => [
-            //        'dsn' => 'smtp://user:pass@smtp.example.com:25',
+            //     'transport' => [
+            //         'smtp://caothanhdat113vl@gmail.com:xfuxxbkzfakiqfcd@smtp.gmail.com:587?encryption=tls',
             //    ],
             //
             // See: https://symfony.com/doc/current/mailer.html#using-built-in-transports

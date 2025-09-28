@@ -3,9 +3,12 @@
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
+
 use yii\widgets\LinkPager;
 
-/** @var $dataProvider yii\data\ActiveDataProvider */
+/** @var $dataProvider yii\data\ActiveDataProvider
+ * @var yii\web\View $this
+ */
 $this->title = 'Manage Users Accounts';
 ?>
 <div class="users-index">
@@ -25,11 +28,20 @@ $this->title = 'Manage Users Accounts';
         </div>
 
         <p>
-            <?= \yii\helpers\Html::a('📧 Test Mail', ['site/test-mail'], [
+            <?= \yii\helpers\Html::a('📧 Test Mail', ['users/test-mail'], [
                 'class' => 'btn btn-primary',
                 'data-method' => 'post'
             ]) ?>
+
+            
         </p>
+
+        <p>
+    <button type="button" class="btn btn-primary" id="btn-test-mail">
+        📧 Test Mail ok
+    </button>
+</p>
+
 
 
     </form>
@@ -79,6 +91,7 @@ $this->title = 'Manage Users Accounts';
                 'format' => 'raw',
                 'value' => function ($model) {
                     return Html::button('Reset', [
+                        'Users/test-mail',
                         'class' => 'btn btn-warning btn-sm',
                         'data-method' => 'post',
                         'data-id' => $model->id,
