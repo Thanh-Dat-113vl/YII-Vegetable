@@ -7,7 +7,7 @@ $this->title = 'Craete User Account';
 
 ?>
 
-<div class="user-create">
+<div class="create">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

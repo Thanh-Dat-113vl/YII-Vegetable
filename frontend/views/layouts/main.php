@@ -41,14 +41,23 @@ AppAsset::register($this);
                 <ul class="navbar-nav ms-auto">
                     <!-- <li class="nav-item"><?= Html::a('Trang chủ', ['/site/index'], ['class' => 'nav-link']) ?></li> -->
                     <li class="nav-item"><?= Html::a('Sản phẩm', ['site/product'], ['class' => 'nav-link']) ?></li>
-                    <li class="nav-item">
+
+                    <li class="nav-item position-relative" style="margin-right:10px;">
                         <?= Html::a('<i class="bi bi-cart"></i>', ['site/cart'], [
-                            'class' => 'nav-link',
+                            'class' => 'nav-link position-relative',
                             'encode' => false,
                             'title' => 'Giỏ hàng',
                             'data-bs-toggle' => 'tooltip',
                         ]) ?>
+
+                        <!-- Badge hiển thị số lượng -->
+                        <span class="position-absolute start-100 translate-middle 
+                 badge rounded-circle bg-danger"
+                            style="font-size:10px; min-width:16px; height:16px; line-height:14px; top:15%">
+                            5
+                        </span>
                     </li>
+
 
                     </li> <?php if (Yii::$app->user->isGuest): ?>
                         <li class="nav-item"><?= Html::a('Đăng nhập', ['site/login'], ['class' => 'nav-link']) ?></li>

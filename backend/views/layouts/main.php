@@ -29,11 +29,11 @@ AppAsset::register($this);
 
     <div class="d-flex">
         <!-- Sidebar -->
-        <div class="bg-dark text-white p-3 vh-100" style="width:220px;">
+        <div class="bg-dark text-white p-3 min-vh-100" style="width:220px;">
             <h4 class="mb-4 nav-item"> <a href="/admin" class="nav-link">Admin Panel </a></h4>
             <ul class="nav flex-column">
                 <li class="nav-item"><a href="/admin/category/index" class="nav-link text-white" <i class="bi bi-folder"></i> Category</a></li>
-                <li class="nav-item"><a href="/admin/products/index" class="nav-link text-white" <i class="bi bi-box"></i> Product</a></li>
+                <li class="nav-item"><a href="/admin/product/index" class="nav-link text-white" <i class="bi bi-box"></i> Product</a></li>
                 <li class="nav-item"><a href="/admin/users/index" class="nav-link text-white" <i class="bi bi-people"></i> User</a></li>
                 <li class="nav-item"><a href="/admin/dashboard/index" class="nav-link text-white" <i class="bi bi-house"></i>Dashboard</a></li>
             </ul>

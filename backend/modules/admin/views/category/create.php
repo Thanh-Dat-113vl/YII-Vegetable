@@ -6,7 +6,7 @@ use yii\widgets\ActiveForm;
 /** @var $model common\models\Category */
 $this->title = 'Add New Category';
 ?>
-<div class="category-create">
+<div class="create">
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php $form = ActiveForm::begin([

@@ -56,9 +56,25 @@ class UsersController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('success', 'Cập nhật người dùng thành công!');
-            return $this->redirect(['index']);
+        // if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        //     Yii::$app->session->setFlash('success', 'Cập nhật người dùng thành công!');
+        //     return $this->redirect(['index']);
+        // }
+        if ($model) {
+        }
+
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Cập nhật người dùng thành công!');
+                return $this->redirect(['index']);
+            } else {
+                // Hiển thị lỗi nếu có
+                Yii::$app->session->setFlash(
+                    'error',
+                    'Cập nhật người dùng thất bại! Vui lòng kiểm tra lại.',
+                    json_encode($model->getErrors())
+                );
+            }
         }
 
         return $this->render('update', ['model' => $model]);

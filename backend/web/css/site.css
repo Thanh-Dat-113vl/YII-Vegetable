@@ -93,3 +93,149 @@ a.desc:after {
 .nav > li > form > button.logout:focus {
     outline: none;
 }
+
+/* create-productions */
+
+.create {
+    max-width: 600px;     
+    margin: 30px auto;    
+    padding: 20px 30px; 
+    background: #fff;     
+    border-radius: 12px;  
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+}
+
+.create .form-group {
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ddd; 
+}
+
+.create label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+.create .form-control {
+    border: none;             
+    border-radius: 0;          
+    box-shadow: none;
+    padding: 10px 0;
+    width: 100%;
+}
+
+.create .form-control:focus {
+    outline: none;
+    border-bottom: 2px solid #0d6efd; /* đổi màu border khi focus */
+    background: #fafafa;
+}
+
+.create .btn {
+    border-radius: 25px;
+    padding: 10px 25px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.create .btn-primary {
+    background: #0d6efd;
+    border: none;
+}
+
+.create .btn-primary:hover {
+    background: #0b5ed7;
+}
+
+.update {
+    /* max-width: 800px; */
+    /* margin: 40px auto; */
+    /* padding: 25px 35px; */
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.update h1 {
+    font-size: 35px;
+    font-weight: 700;
+    color: #0d6efd;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.update label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.update .form-control {
+    width: 50%;
+    border-bottom: 2px solid #585454;
+    border-radius: 8px;
+    padding: 10px 12px;
+    transition: all 0.3s ease;
+    box-shadow: none;
+}
+
+.update .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 6px rgba(13,110,253,0.3);
+    background: #fafcff;
+}
+
+.update .form-group {
+    margin-bottom: 20px;
+}
+
+.update .btn {
+    border-radius: 30px;
+    padding: 10px 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.update .btn-success {
+    background: #198754;
+    border: none;
+}
+
+.update .btn-success:hover {
+    background: #157347;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(25,135,84,0.3);
+}
+.update .input-group
+{
+    width: 50%;
+}
+.update .btn-primary {
+    background: #0d6efd;
+    border: none;
+}
+
+.update .btn-primary:hover {
+    background: #0b5ed7;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(13,110,253,0.3);
+}
+
+.update img {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 4px;
+    background: #fafafa;
+    transition: transform 0.3s ease;
+}
+
+.update img:hover {
+    transform: scale(1.05);
+}
+
+/* end create-productions */
+
+

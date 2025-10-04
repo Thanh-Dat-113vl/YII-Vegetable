@@ -69,6 +69,8 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
             ['email', 'email'],
             ['phone', 'string', 'max' => 10],
             [['phone'], 'unique', 'targetAttribute' => 'phone', 'message' => 'Số điện thoại đã tồn tại.'],
+            ['phone', 'match', 'pattern' => '/^0\d{9}$/', 'message' => 'Số điện thoại phải có 10 số và bắt đầu bằng 0'],
+
             //     'password',
             //     'match',
             //     'pattern' => '/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/',
@@ -112,15 +114,13 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
+            $this->phone = $this->phone;
+
             if ($this->isNewRecord) {
+                $this->role = self::ROLE_CUSTOMER;  // default
 
-                if ($this->role === null) {
-                    $this->role = self::ROLE_CUSTOMER;  // default
-                }
+                $this->status = self::STATUS_ACTIVE; // default
 
-                if ($this->status === null) {
-                    $this->status = self::STATUS_ACTIVE; // default
-                }
 
                 $this->auth_key = Yii::$app->security->generateRandomString();
                 $this->created_at = date('Y-m-d H:i:s');

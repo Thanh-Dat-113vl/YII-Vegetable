@@ -10,27 +10,26 @@ return [
             'charset' => 'utf8',
         ],
         'mailer' => [
-            'class' => \yii\symfonymailer\Mailer::class,
+            'class' => 'yii\swiftmailer\Mailer',
             'viewPath' => '@common/mail',
             'useFileTransport' => false,
 
             'transport' => [
-                'class' => Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport::class,
-
-                'scheme' => 'smtps',
+                'class' => 'Swift_SmtpTransport',
+                // 'scheme' => 'smtps',
                 'host' => 'smtp.gmail.com',
                 'username' => 'caothanhdat113vl@gmail.com',
-                'password' => 'xfux xbkz faki qfcd',
+                'password' => 'xfuxxbkzfakiqfcd',
                 'port' => 587,
                 'encryption' => 'tls',
-                // 'dsn' => 'native://default',
             ],
+            // 'logger' => true,
             //
             // DSN example:
-            //    'transport' => [
-            //        'dsn' => 'smtp://user:pass@smtp.example.com:25',
-            //    ],
-            //
+            // 'transport' => [
+            //     'dsn' => 'smtps://caothanhdat113vl@gmail.com:xfuxxbkzfakiqfcd@smtp.gmail.com:465',
+            // ],
+
             // See: https://symfony.com/doc/current/mailer.html#using-built-in-transports
             // Or if you use a 3rd party service, see:
             // https://symfony.com/doc/current/mailer.html#using-a-3rd-party-transport

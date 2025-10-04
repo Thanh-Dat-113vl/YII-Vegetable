@@ -16,6 +16,8 @@ use common\components\MailerHelper;
  */
 class SiteController extends Controller
 {
+
+
     /**
      * {@inheritdoc}
      */
@@ -59,23 +61,14 @@ class SiteController extends Controller
 
     public function actionTestMail()
     {
-        $error = '';
-        $sent = MailerHelper::send(
-            [
-                'caothanhdat113vl@gmail.com' => 'Dat-Cao',
-                'ThanhDat-Cao@vn.apachefootwear.com' => 'Apache-VN'
-            ],
-            'Test mail from Yii2 Backend',
-            '<h3>Xin chào!</h3><p>Đây là email test gửi từ Yii2 backend.</p>',
-            null,
-            $error
-        );
+        Yii::$app->mailer->compose()
+            ->setFrom('caothanhdat113vl@gmail.com')
+            ->setTo('ThanhDat-Cao@vn.apachefootwear.com')
+            ->setSubject('Test mail from Yii2 Backend')
+            ->setHtmlBody('<h3>Xin chào!</h3><p>Đây là email test gửi từ Yii2 backend.</p>')
+            ->send();
 
-        if ($sent) {
-            Yii::$app->session->setFlash('success', '✅ Mail đã được gửi thành công!');
-        } else {
-            Yii::$app->session->setFlash('error', '❌ Gửi mail thất bại!');
-        }
+
 
         return $this->redirect(['index']); // quay lại trang index của backend
     }

@@ -20,9 +20,15 @@ return [
         'fixture' => [
             'class' => \yii\console\controllers\FixtureController::class,
             'namespace' => 'common\fixtures',
-          ],
+        ],
     ],
     'components' => [
+        'formatter' => [
+            'class' => 'yii\i18n\Formatter',
+            'decimalSeparator' => ',',
+            'thousandSeparator' => '.',
+            'currencyCode' => 'VND',
+        ],
         'log' => [
             'targets' => [
                 [

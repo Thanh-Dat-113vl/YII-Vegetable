@@ -7,6 +7,8 @@ $params = array_merge(
 );
 
 return [
+    'timeZone' => 'Asia/Ho_Chi_Minh',
+
     'id' => 'app-backend',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
@@ -14,6 +16,7 @@ return [
     'modules' => [
         'admin' => [
             'class' => 'backend\modules\admin\Module',
+
         ],
     ],
     'as access' => [
@@ -29,6 +32,15 @@ return [
         ]
     ],
     'components' => [
+        'formatter' => [
+            'class' => 'yii\i18n\Formatter',
+            'decimalSeparator' => ',',
+            'thousandSeparator' => '.',
+            'currencyCode' => 'VND',
+            'timeZone' => 'Asia/Ho_Chi_Minh',
+            'dateFormat' => 'php:dd/mm/YYYY',
+            'datetimeFormat' => 'php:dd/mm/YYYY HH:ii:ss',
+        ],
         'request' => [
             'csrfParam' => '_csrf-backend',
         ],
@@ -46,7 +58,9 @@ return [
             'targets' => [
                 [
                     'class' => \yii\log\FileTarget::class,
-                    'levels' => ['error', 'warning'],
+                    'levels' => ['error', 'warning', 'info'],
+                    'logVars' => [],
+
                 ],
             ],
         ],

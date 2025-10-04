@@ -101,3 +101,16 @@ a.desc:after {
 {
     text-decoration: none;
 }
+
+.product_price {
+  font-size: 15px;
+  line-height: 16px;
+  color: #192038;
+}
+
+@media (min-width: 992px) {
+  .product_price {
+    font-size: 16px !important;
+    line-height: 18px !important;
+  }
+}

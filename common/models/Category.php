@@ -74,7 +74,8 @@ class Category extends ActiveRecord
     {
         if (parent::beforeSave($insert)) {
             if (empty($this->slug)) {
-                $this->slug = strtolower(str_replace(' ', '-', $this->name));
+                $name = (string) ($this->name ?? '');
+                $this->slug = strtolower(str_replace(' ', '-', $name));
             }
             if ($this->isNewRecord) {
                 $this->created_at = date('Y-m-d H:i:s');
