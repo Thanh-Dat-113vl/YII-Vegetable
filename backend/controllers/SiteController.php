@@ -26,6 +26,7 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
+                'only' => ['logout', 'index', 'error', 'test-mail'],
                 'rules' => [
                     [
                         'actions' => ['login', 'error', 'test-mail'],
@@ -61,6 +62,7 @@ class SiteController extends Controller
 
     public function actionTestMail()
     {
+<<<<<<< HEAD
         Yii::$app->mailer->compose()
             ->setFrom('caothanhdat113vl@gmail.com')
             ->setTo('ThanhDat-Cao@vn.apachefootwear.com')
@@ -69,6 +71,33 @@ class SiteController extends Controller
             ->send();
 
 
+=======
+
+        Yii::$app->mailer->compose()
+        ->setTo('caothanh113vl@gmail.com')
+        ->setFrom(['caothanhdat113vl@gmail.com' => 'admin'])
+        ->setSubject('Test mail from Yii2 Backend')
+        ->setHtmlBody('<h3>Xin chào!</h3><p>Đây là email test gửi từ Yii2 backend.</p>')
+        ->send();
+
+        // $error = '';
+        // $sent = MailerHelper::send(
+        //     [
+        //         'caothanh113vl@gmail.com' => 'Dat-Cao',
+        //         'ThanhDat-Cao@vn.apachefootwear.com' => 'Apache-VN'
+        //     ],
+        //     'Test mail from Yii2 Backend',
+        //     '<h3>Xin chào!</h3><p>Đây là email test gửi từ Yii2 backend.</p>',
+        //     ['caothanhdat113@gmail.com' => 'admin'],
+        //     $error
+        // );
+
+        // if ($sent) {
+        //     Yii::$app->session->setFlash('success', '✅ Mail đã được gửi thành công!');
+        // } else {
+        //     Yii::$app->session->setFlash('error', '❌ Gửi mail thất bại!');
+        // }
+>>>>>>> fae6946381cbfd27040a3f96c65254ba4a2d01be
 
         return $this->redirect(['index']); // quay lại trang index của backend
     }
@@ -94,7 +123,7 @@ class SiteController extends Controller
             return $this->goHome();
         }
 
-        $this->layout = 'modules\admin\index';
+        $this->layout = 'main';
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
