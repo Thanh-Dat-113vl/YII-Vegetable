@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Product;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
@@ -15,6 +16,7 @@ use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
+use yii\web\NotFoundHttpException;
 
 
 /**
@@ -82,6 +84,45 @@ class SiteController extends Controller
 
         return $this->render('index', [
             'products' => $products
+        ]);
+    }
+
+    public function actionSearch()
+    {
+        $query = Yii::$app->request->get('query', '');
+        $products = [];
+
+        if (!empty($query)) {
+            $products = \common\models\Product::find()
+                ->where(['like', 'name', $query])
+                ->all();
+        }
+
+        return $this->render('search', [
+            'products' => $products,
+            'query' => $query,
+        ]);
+    }
+
+    public function actionProductDetail($id)
+    {
+        $product = \common\models\Product::findOne($id);
+        $category = \common\models\Category::findOne($product->category_id);
+
+        if (!$product) {
+            throw new NotFoundHttpException('Sản phẩm không tồn tại.');
+        }
+
+        $related = Product::find()
+            ->where(['category_id' => $product->category_id])
+            ->andWhere(['<>', 'id', $product->id])
+            ->limit(4)
+            ->all();
+
+        return $this->render('product_detail', [
+            'product' => $product,
+            'category' => $category,
+            'related' => $related,
         ]);
     }
 
@@ -281,5 +322,47 @@ class SiteController extends Controller
     public function actionProduct()
     {
         return $this->render('product');
+    }
+
+
+    // Thêm sản phẩm vào giỏ hàng (qua AJAX)
+    public function actionAddToCart()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $data = json_decode(Yii::$app->request->getRawBody(), true);
+        $cookies = Yii::$app->request->cookies;
+        $responseCookies = Yii::$app->response->cookies;
+
+        $cart = [];
+
+        if ($cookies->has('cart')) {
+            $cart = json_decode($cookies->getValue('cart'), true);
+        }
+
+        $id = $data['id'];
+        if (isset($cart[$id])) {
+            $cart[$id]['quantity'] += 1;
+        } else {
+            $cart[$id] = [
+                'id' => $data['id'],
+                'name' => $data['name'],
+                'price' => $data['price'],
+                'image' => $data['image'],
+                'quantity' => 1
+            ];
+        }
+
+        // Ghi lại cookie  7 ngày
+        $responseCookies->add(new \yii\web\Cookie([
+            'name' => 'cart',
+            'value' => json_encode($cart),
+            'expire' => time() + 7 * 24 * 3600
+        ]));
+
+        return [
+            'success' => true,
+            'total' => array_sum(array_column($cart, 'quantity'))
+        ];
     }
 }

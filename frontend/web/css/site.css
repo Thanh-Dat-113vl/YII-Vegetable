@@ -114,3 +114,65 @@ a.desc:after {
     line-height: 18px !important;
   }
 }
+
+.gradient-btn {
+  background: radial-gradient(circle at center, #79ea8e, #43c55f, #0f8609);
+  background-size: 500% 100%;
+  height: 40px;
+  font-size: 20px;
+  transition: opacity 0.3s ease;
+  animation: gradient-move 6s linear infinite;
+}
+
+.gradient-btn:hover {
+  opacity: 0.9;
+}
+
+.gradient-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@keyframes gradient-move {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+
+ .product-container {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap; /* Tự xuống hàng khi màn hình nhỏ */
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+    }
+    .product-left {
+      flex: 1 1 50%;
+      min-width: 300px;
+    }
+    .product-right {
+      flex: 1 1 40%;
+      min-width: 250px;
+    }
+    .product-img-main {
+      width: 100%;
+      height: 400px;
+      object-fit: contain;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+    .thumb-img {
+      height: 80px;
+      width: 80px;
+      object-fit: contain;
+      border: 1px solid #ddd;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .thumb-img:hover {
+      border-color: #0d6efd;
+      transform: scale(1.05);
+    }

@@ -27,7 +27,7 @@ AppAsset::register($this);
 
 </head>
 
-<body>
+<body style="background-color:#e9ecef;">
     <?php $this->beginBody() ?>
 
     <!-- HEADER -->
@@ -39,9 +39,22 @@ AppAsset::register($this);
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    <div class="d-flex align-items-center border-radius-2 px-2">
+                        <input type="text" class="form-control me-2" placeholder="Tìm kiếm..." style="width:200px; " class="flex" onkeydown="if(event.key==='Enter'){ window.location.href='/site/product?search='+this.value; }">
+                        &nbsp;&nbsp;
+                    </div>
                     <!-- <li class="nav-item"><?= Html::a('Trang chủ', ['/site/index'], ['class' => 'nav-link']) ?></li> -->
-                    <li class="nav-item"><?= Html::a('Sản phẩm', ['site/product'], ['class' => 'nav-link']) ?></li>
+                    <!-- <li class="nav-item"><?= Html::a('Sản phẩm', ['site/product'], ['class' => 'nav-link']) ?></li> -->
 
+                    <!-- Giỏ hàng với badge số lượng -->
+                    <?php
+                    $cookies = Yii::$app->request->cookies;
+                    $cartCount = 0;
+                    if ($cookies->has('cart')) {
+                        $cart = json_decode($cookies->getValue('cart'), true);
+                        $cartCount = array_sum(array_column($cart, 'quantity'));
+                    }
+                    ?>
                     <li class="nav-item position-relative" style="margin-right:10px;">
                         <?= Html::a('<i class="bi bi-cart"></i>', ['site/cart'], [
                             'class' => 'nav-link position-relative',
@@ -51,11 +64,14 @@ AppAsset::register($this);
                         ]) ?>
 
                         <!-- Badge hiển thị số lượng -->
-                        <span class="position-absolute start-100 translate-middle 
-                 badge rounded-circle bg-danger"
-                            style="font-size:10px; min-width:16px; height:16px; line-height:14px; top:15%">
-                            5
-                        </span>
+                        <?php if ($cartCount > 0): ?>
+                            <span id="cart-count"
+                                class="position-absolute start-100 translate-middle badge rounded-circle bg-danger"
+                                style="font-size:10px; min-width:16px; height:16px; line-height:14px; top:15%">
+                                <?= $cartCount ?>
+                            </span>
+                        <?php endif; ?>
+
                     </li>
 
 
@@ -136,6 +152,19 @@ AppAsset::register($this);
             successModal.show();
         </script>
     <?php endif; ?>
+
+
+    <?php
+    $csrfToken = Yii::$app->request->getCsrfToken();
+    $addToCartUrl = \yii\helpers\Url::to(['site/add-to-cart']);
+    $this->registerJs("
+    window.csrfToken = '{$csrfToken}';
+    window.addToCartUrl = '{$addToCartUrl}';
+", \yii\web\View::POS_HEAD);
+
+    $this->registerJsFile('@web/js/cart.js', ['depends' => [\yii\web\JqueryAsset::class]]);
+    ?>
+
 </body>
 
 </html>

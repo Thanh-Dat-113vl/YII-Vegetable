@@ -6,43 +6,21 @@ return [
             'class' => \yii\db\Connection::class,
             'dsn' => 'mysql:host=127.0.0.1;dbname=QLRC',
             'username' => 'root',
-            'password' => '12345678',
+            'password' => 'Aa123456',
             'charset' => 'utf8',
         ],
         'mailer' => [
-<<<<<<< HEAD
-            'class' => 'yii\swiftmailer\Mailer',
+            'class' => \yii\symfonymailer\Mailer::class,
             'viewPath' => '@common/mail',
             'useFileTransport' => false,
-
             'transport' => [
-                'class' => 'Swift_SmtpTransport',
-                // 'scheme' => 'smtps',
+                'scheme' => 'smtp',
                 'host' => 'smtp.gmail.com',
                 'username' => 'caothanhdat113vl@gmail.com',
-                'password' => 'xfuxxbkzfakiqfcd',
+                'password' => 'xfuxxbkzfakiqfcd', // App Password Gmail
                 'port' => 587,
                 'encryption' => 'tls',
             ],
-            // 'logger' => true,
-            //
-            // DSN example:
-            // 'transport' => [
-            //     'dsn' => 'smtps://caothanhdat113vl@gmail.com:xfuxxbkzfakiqfcd@smtp.gmail.com:465',
-            // ],
-
-=======
-    'class' => \yii\symfonymailer\Mailer::class,
-    'viewPath' => '@common/mail',
-    'useFileTransport' => false,
-    'transport' => [
-        'scheme' => 'smtp',
-        'host' => 'smtp.gmail.com',
-        'username' => 'caothanhdat113vl@gmail.com',
-        'password' => 'xfuxxbkzfakiqfcd', // App Password Gmail
-        'port' => 587,
-        'encryption' => 'tls',
-    ],
 
             //
             // DSN example:
@@ -50,7 +28,6 @@ return [
             //         'smtp://caothanhdat113vl@gmail.com:xfuxxbkzfakiqfcd@smtp.gmail.com:587?encryption=tls',
             //    ],
             //
->>>>>>> fae6946381cbfd27040a3f96c65254ba4a2d01be
             // See: https://symfony.com/doc/current/mailer.html#using-built-in-transports
             // Or if you use a 3rd party service, see:
             // https://symfony.com/doc/current/mailer.html#using-a-3rd-party-transport
