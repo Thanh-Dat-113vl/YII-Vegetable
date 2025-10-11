@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
         price: this.dataset.price,
         image: this.dataset.image,
       };
+      console.log("data", data);
 
       fetch(window.addToCartUrl, {
         method: "POST",
@@ -21,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((res) => {
           if (res.success) {
             updateCartBadge(res.total);
-            showToast("✅ Đã thêm vào giỏ hàng!");
+            showToast("Đã thêm vào giỏ hàng!");
           } else {
             showToast("❌ Lỗi thêm giỏ hàng!");
           }
@@ -62,7 +63,7 @@ function showToast(msg) {
   const toast = document.createElement("div");
   toast.textContent = msg;
   toast.className =
-    "position-fixed bottom-0 end-0 bg-dark text-white p-2 m-3 rounded shadow";
+    "position-fixed top-0 end-0 bg-dark text-white p-2 m-3 rounded shadow";
   toast.style.zIndex = 9999;
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 2000);

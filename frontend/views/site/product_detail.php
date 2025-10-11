@@ -37,6 +37,8 @@ use yii\helpers\Url;
             </div>
         </div>
 
+
+
         <!-- Bên phải: thông tin -->
         <div class="product-right">
             <h5 class="fw-bold"><?= $product->name ?></h5>
@@ -48,7 +50,13 @@ use yii\helpers\Url;
             </div>
             <p class="text-muted"><?= $product->description ?></p>
 
-            <button type="button" class="add-to-cart btn btn-primary w-100 d-flex align-items-center justify-content-center text-uppercase fw-semibold text-white border-0 rounded-2 py-2 gap-2 gradient-btn"
+        <?php
+                $this->registerJsFile('@web/js/cart.js', [
+                    'depends' => [\yii\web\JqueryAsset::class],
+                ]);
+            ?>
+
+            <button type="button" class="add-to-cart-btn btn btn-primary w-100 d-flex align-items-center justify-content-center text-uppercase fw-semibold text-white border-0 rounded-2 py-2 gap-2 gradient-btn"
                 data-id="<?= $product->id ?>"
                 data-name="<?= Html::encode($product->name) ?>"
                 data-price="<?= $product->price * (100 - $product->discount) / 100 ?>"
@@ -64,7 +72,7 @@ use yii\helpers\Url;
             </div>
         </div>
     </div>
-
+<!-- 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             document.querySelectorAll(".add-to-cart").forEach(btn => {
@@ -112,4 +120,4 @@ use yii\helpers\Url;
                 });
             });
         });
-    </script>
+    </script> -->

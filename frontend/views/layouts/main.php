@@ -4,6 +4,8 @@ use yii\helpers\Html;
 use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use common\models\Banner;
+use yii\helpers\Url;
+
 
 $banners = Banner::find()->where(['status' => 1])->all();
 
@@ -13,6 +15,11 @@ AppAsset::register($this);
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
+    <?php
+    $this->registerJsFile('@web/js/cart.js', [
+     'depends' => [\yii\web\JqueryAsset::class],
+     ]);
+    ?>
 
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
@@ -67,11 +74,10 @@ AppAsset::register($this);
                         <?php if ($cartCount > 0): ?>
                             <span id="cart-count"
                                 class="position-absolute start-100 translate-middle badge rounded-circle bg-danger"
-                                style="font-size:10px; min-width:16px; height:16px; line-height:14px; top:15%">
+                                style="font-size:10px; min-width:16px; height:16px; line-height:9px; top:15%">
                                 <?= $cartCount ?>
                             </span>
                         <?php endif; ?>
-
                     </li>
 
 
@@ -115,7 +121,7 @@ AppAsset::register($this);
     </main>
 
     <!-- FOOTER -->
-    <footer class="bg-dark text-white text-center py-4">
+    <footer class="bg-dark text-white text-center py-4 ">
         <p>&copy; <?= date('Y') ?> Rau Củ Online. CTD.</p>
         <p>
             <a href="/site/about" class="text-white me-3">Về chúng tôi</a>

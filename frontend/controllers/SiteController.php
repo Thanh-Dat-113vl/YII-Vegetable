@@ -314,10 +314,6 @@ class SiteController extends Controller
         ]);
     }
 
-    public function actionCart()
-    {
-        return $this->render('cart');
-    }
 
     public function actionProduct()
     {
@@ -339,6 +335,7 @@ class SiteController extends Controller
         if ($cookies->has('cart')) {
             $cart = json_decode($cookies->getValue('cart'), true);
         }
+
 
         $id = $data['id'];
         if (isset($cart[$id])) {
@@ -364,5 +361,26 @@ class SiteController extends Controller
             'success' => true,
             'total' => array_sum(array_column($cart, 'quantity'))
         ];
+    }
+
+    public function actionCart()
+    {
+        $cookies = Yii::$app->request->cookies;
+        // $product = \common\models\Product::findOne($id);
+        $user = Yii::$app->user->isGuest ? null : Yii::$app->user->identity;
+        $cart = [];
+
+        if ($cookies->has('cart')) {
+            $cart = json_decode($cookies->getValue('cart'), true);
+        }
+
+
+        return $this->render(
+            'cart',
+            [
+                'cart' => $cart,
+                'user' => $user,
+            ]
+        );
     }
 }

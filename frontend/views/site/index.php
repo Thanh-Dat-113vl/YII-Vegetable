@@ -116,18 +116,20 @@ $this->title = "Trang chủ";
                                     ?>
                                     <span class="text-muted ms-2">(12 đánh giá)</span>
                                 </div>
+                            </a>
                                 <!-- <a href="#" class="btn btn-outline-success mt-auto">Mua</a> -->
-
-                                <button type="button" class=" add-to-cart btn btn-outline-success mt-auto"
+                                <button type="button" class=" add-to-cart-btn btn btn-outline-success mt-auto"
                                     data-id="<?= $p->id ?>"
                                     data-name="<?= Html::encode($p->name) ?>"
                                     data-price="<?= $p->price * (100 - $p->discount) / 100 ?>"
-                                    data-image="<?= Yii::getAlias('@web/uploads/' . $p->image) ?>">
+                                     data-image="<?= Html::encode($p->image) ?>">
                                     <i class="bi bi-cart-plus"></i> Mua
+                                
                                 </button>
+                                
                             </div>
                         </div>
-                    </a>
+                    
                 </div>
             <?php endforeach; ?>
 
