@@ -3,8 +3,7 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 
-/** @var frontend\models\Product $product */
-/** @var frontend\models\Category $category */
+
 
 ?>
 
@@ -88,3 +87,54 @@ use yii\helpers\Url;
             </div>
 
         </div> -->
+
+
+        <!-- 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".add-to-cart").forEach(btn => {
+                btn.addEventListener("click", function() {
+                    const data = {
+                        id: this.dataset.id,
+                        name: this.dataset.name,
+                        price: this.dataset.price,
+                        image: this.dataset.image
+                    };
+
+                    fetch('<?= \yii\helpers\Url::to(['site/add-to-cart']) ?>', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-Token': '<?= Yii::$app->request->getCsrfToken() ?>'
+                            },
+                            body: JSON.stringify(data)
+                        })
+                        .then(res => res.json())
+                        .then(res => {
+                            if (res.success) {
+                                // ✅ Cập nhật badge ngay mà không reload
+                                let badge = document.getElementById('cart-count');
+                                if (badge) {
+                                    badge.textContent = res.total;
+                                    badge.classList.remove('d-none');
+                                } else {
+                                    // Nếu badge chưa tồn tại, tạo mới
+                                    const cartLink = document.querySelector('.bi-cart').parentElement;
+                                    const newBadge = document.createElement('span');
+                                    newBadge.id = 'cart-count';
+                                    newBadge.className = 'position-absolute start-100 translate-middle badge rounded-circle bg-danger';
+                                    newBadge.style = 'font-size:10px; min-width:16px; height:16px; line-height:14px; top:15%';
+                                    newBadge.textContent = res.total;
+                                    cartLink.parentElement.appendChild(newBadge);
+                                }
+
+                                alert('Đã thêm vào giỏ hàng!');
+                                document.querySelector("#cart-count").innerText = res.total;
+                            } else {
+                                alert('Lỗi thêm giỏ hàng!');
+                            }
+                        });
+                });
+            });
+        });
+    </script> -->

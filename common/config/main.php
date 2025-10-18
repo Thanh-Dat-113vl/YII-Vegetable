@@ -11,6 +11,9 @@ return [
             'datetimeFormat' => 'php:d-m-Y H:i:s',
             'timeFormat' => 'php:H:i:s',
         ],
+        'user' => [
+            ''
+        ]
     ],
 
     'aliases' => [

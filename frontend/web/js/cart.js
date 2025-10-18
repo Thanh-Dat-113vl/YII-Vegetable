@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
         price: this.dataset.price,
         image: this.dataset.image,
       };
-      console.log("data", data);
+      console.log("data cart", data);
 
       fetch(window.addToCartUrl, {
         method: "POST",
@@ -37,25 +37,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // 🔹 Cập nhật số lượng badge trên icon giỏ hàng
 function updateCartBadge(total) {
-  let badge = document.getElementById("cart-count");
+  const badgeId = "cart-count";
+  let badge = document.getElementById(badgeId);
+
+  // Nếu badge đã có => cập nhật
   if (badge) {
     badge.textContent = total;
-    badge.classList.remove("d-none");
-  } else {
-    // Nếu badge chưa có, tạo mới
-    const cartIcon = document.querySelector(".bi-cart");
-    if (cartIcon) {
-      const parent = cartIcon.closest(".nav-item");
-      const newBadge = document.createElement("span");
-      newBadge.id = "cart-count";
-      newBadge.className =
-        "position-absolute start-100 translate-middle badge rounded-circle bg-danger";
-      newBadge.style =
-        "font-size:10px; min-width:16px; height:16px; line-height:14px; top:15%";
-      newBadge.textContent = total;
-      parent.appendChild(newBadge);
-    }
+    badge.classList.toggle("d-none", total <= 0);
+    return;
   }
+
+  // Nếu chưa có badge => tạo mới
+  const cartIcon = document.querySelector(".bi-cart, .bi-cart-plus, .bi-cart3");
+  if (!cartIcon) return;
+
+  // Tìm phần tử cha để gắn badge vào
+  let parent = cartIcon.closest("a.nav-link") || cartIcon.parentElement;
+  if (!parent) return;
+
+  // Tạo badge mới
+  const newBadge = document.createElement("span");
+  newBadge.id = badgeId;
+  newBadge.className =
+    "position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger";
+  newBadge.style.cssText =
+    "font-size:10px; min-width:16px; height:16px; line-height:9px; top:15%";
+  newBadge.textContent = total;
+
+  // Gắn parent position-relative để định vị badge đúng
+  parent.style.position = "relative";
+  parent.appendChild(newBadge);
 }
 
 // 🔹 Hiển thị thông báo đơn giản (toast mini)

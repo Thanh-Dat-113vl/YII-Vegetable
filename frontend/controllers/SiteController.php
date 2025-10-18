@@ -87,20 +87,24 @@ class SiteController extends Controller
         ]);
     }
 
-    public function actionSearch()
-    {
-        $query = Yii::$app->request->get('query', '');
-        $products = [];
+    public function actionSearch($keyword = null)
+    {        $query = Product::find();
+       
 
-        if (!empty($query)) {
-            $products = \common\models\Product::find()
-                ->where(['like', 'name', $query])
-                ->all();
+        if($keyword){
+            $query->andFilterWhere(['like','name', $keyword]);
         }
 
+        $dataProvider = new \yii\data\ActiveDataProvider([
+            'query'=> $query,
+            'pagination' => [
+                'pageSize'=> 10,
+            ]
+        ]);
+
         return $this->render('search', [
-            'products' => $products,
-            'query' => $query,
+             'dataProvider' => $dataProvider,
+             'keyword' => $keyword,
         ]);
     }
 
@@ -319,6 +323,8 @@ class SiteController extends Controller
     {
         return $this->render('product');
     }
+   
+
 
 
     // Thêm sản phẩm vào giỏ hàng (qua AJAX)
@@ -345,7 +351,7 @@ class SiteController extends Controller
                 'id' => $data['id'],
                 'name' => $data['name'],
                 'price' => $data['price'],
-                'image' => $data['image'],
+                'image' => basename($data['image']),
                 'quantity' => 1
             ];
         }
@@ -383,4 +389,9 @@ class SiteController extends Controller
             ]
         );
     }
+
+   
+
+ 
+
 }

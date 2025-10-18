@@ -56,15 +56,7 @@ class CartController extends Controller
         $products = Product::find()->where(['id' => array_keys($cart)])->all();
         return $this->render('checkout', compact('products', 'cart'));
     }
-    public function actionRemove($id)
-    {
-        $cart = Yii::$app->session->get('cart', []);
-        if (isset($cart[$id])) {
-            unset($cart[$id]);
-            Yii::$app->session->set('cart', $cart);
-        }
-        return $this->redirect(['index']);
-    }
+  
     public function actionUpdate()
     {
         $post = Yii::$app->request->post('qty', []);
@@ -77,4 +69,99 @@ class CartController extends Controller
         Yii::$app->session->set('cart', $cart);
         return $this->redirect(['index']);
     }
+
+    
+
+   public function actionUpdateQuantity()
+{
+    Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+    $id = Yii::$app->request->post('id');
+    $type = Yii::$app->request->post('type'); // 'plus' hoặc 'minus'
+
+    if (!$id || !$type) {
+        return ['success' => false, 'message' => 'Thiếu dữ liệu'];
+    }
+
+    $cookies = Yii::$app->request->cookies;
+    $cart = [];
+
+    if ($cookies->has('cart')) {
+        $cart = json_decode($cookies->getValue('cart'), true);
+    }
+
+    if (!isset($cart[$id])) {
+        return ['success' => false, 'message' => 'Sản phẩm không tồn tại trong giỏ hàng'];
+    }
+
+    // Giới hạn tồn kho (nếu bạn có trường stock trong Product)
+    $product = \common\models\Product::findOne($id);
+    $maxStock = $product ? $product->stock : 9999;
+
+    // Cập nhật số lượng
+    if ($type === 'plus' && $cart[$id]['quantity'] < $maxStock) {
+        $cart[$id]['quantity'] += 1;
+    } elseif ($type === 'minus') {
+        $cart[$id]['quantity'] -= 1;
+        if ($cart[$id]['quantity'] <= 0) {
+            unset($cart[$id]); // Nếu giảm về 0 thì xóa luôn sản phẩm
+        }
+    }
+
+    // Ghi lại cookie
+    Yii::$app->response->cookies->add(new \yii\web\Cookie([
+        'name' => 'cart',
+        'value' => json_encode($cart),
+        'expire' => time() + 3600 * 24 * 30
+    ]));
+
+    $phi = 1;
+    // Tính lại tổng tiền
+    $total = 0;
+    foreach ($cart as $item) {
+        $total += $item['price'] * $item['quantity'] ;
+        return ;
+    }
+
+    return [
+        'success' => true,
+        'total' => number_format($total, 0, ',', '.'),
+        'subtotal' => isset($cart[$id]) ? $cart[$id]['price'] * $cart[$id]['quantity'] : 0,
+        'quantity' => isset($cart[$id]) ? $cart[$id]['quantity'] : 0,
+        'cartCount' => count($cart)
+    ];
+    }
+
+     public function actionRemoveFromCart()
+{
+    Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+    $id = Yii::$app->request->post('id');
+
+    if (!$id) {
+        return ['success' => false, 'message' => 'Thiếu ID sản phẩm'];
+    }
+
+    $cookies = Yii::$app->request->cookies;
+    $cart = [];
+
+    if ($cookies->has('cart')) {
+        $cart = json_decode($cookies->getValue('cart'), true);
+    }
+
+    if (!isset($cart[$id])) {
+        return ['success' => false, 'message' => 'Sản phẩm không tồn tại trong giỏ hàng'];
+    }
+
+    // Xóa sản phẩm khỏi mảng
+    unset($cart[$id]);
+
+    // Cập nhật lại cookie
+    Yii::$app->response->cookies->add(new \yii\web\Cookie([
+        'name' => 'cart',
+        'value' => json_encode($cart),
+        'expire' => time() + 3600 * 24 * 30
+    ]));
+
+    return ['success' => true];
+}
+
 }

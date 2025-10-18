@@ -79,34 +79,35 @@ $this->title = "Trang chủ";
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-4">
 
             <?php foreach ($products as $p): ?>
-                <div class="col">
-                    <a href="<?= Url::to(['product-detail', 'id' => $p->id]) ?>" class="text-decoration-none">
-                        <div class="card h-100 shadow-sm">
-                            <img src="<?= Yii::getAlias('@web/uploads/' . $p['image']) ?>"
-                                class="card-img-top" style="height:200px;object-fit:cover;" />
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="text-black"><?= $p->name ?></h5>
-                                <span class="d-flex fw-bold mt-1"
-                                    style="font-size:16px; line-height:16px; color:#192038;">
-                                    <?= Yii::$app->formatter->asDecimal($p->price * (100 - $p->discount) / 100, 0) ?>đ/<?= $p->unit ?>
-                                </span>
+            <div class="col">
+                <a href="<?= Url::to(['product-detail', 'id' => $p->id]) ?>" class="text-decoration-none">
+                    <div class="card h-100 shadow-sm">
+                        <img src="<?= Yii::getAlias('@web/uploads/' . $p['image']) ?>" class="card-img-top"
+                            style="height:200px;object-fit:cover;" />
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="text-black"><?= $p->name ?></h5>
+                            <span class="d-flex fw-bold mt-1" style="font-size:16px; line-height:16px; color:#192038;">
+                                <?= Yii::$app->formatter->asDecimal($p->price * (100 - $p->discount) / 100, 0) ?>₫/<?= $p->unit ?>
+                            </span>
 
-                                <!-- <p class="text-success fw-bold"><?= Yii::$app->formatter->asDecimal($p->price * (100 - $p->discount) / 100, 0) ?> đ</p> -->
-                                <div class="mb-2px block leading-3">
-                                    <?php if ($p->discount > 0): ?>
-                                        <!-- giá discount -->
-                                        <span class="text-decoration-line-through" style="color:#9DA7BC; font-size:11px; line-height:0;"> <?= Yii::$app->formatter->asDecimal($p->price, 0) ?>đ</span>
-                                        <span class="fw-bold text-white text-center d-inline-block"
-                                            style="margin-left:3px; width:30px; border-radius:2px; background-color:rgba(255,1,1,0.7); padding:2px 3px; font-size:9px; line-height:12px;">
+                            <!-- <p class="text-success fw-bold"><?= Yii::$app->formatter->asDecimal($p->price * (100 - $p->discount) / 100, 0) ?> đ</p> -->
+                            <div class="mb-2px block leading-3">
+                                <?php if ($p->discount > 0): ?>
+                                <!-- giá discount -->
+                                <span class="text-decoration-line-through"
+                                    style="color:#9DA7BC; font-size:11px; line-height:0;">
+                                    <?= Yii::$app->formatter->asDecimal($p->price, 0) ?>₫</span>
+                                <span class="fw-bold text-white text-center d-inline-block"
+                                    style="margin-left:3px; width:30px; border-radius:2px; background-color:rgba(255,1,1,0.7); padding:2px 3px; font-size:9px; line-height:12px;">
 
-                                            <span class="mr-1px">-</span><?= $p->discount ?>%</span>
-                                    <?php endif; ?>
-
-                                </div>
-                                <!-- start -->
-                                <div class="mb-2 text-warning">
-                                    <?php
-                                    $fullStars = floor($p->rating);
+                                    <span class="mr-1px">-</span><?= $p->discount ?>%</span>
+                                <?php endif; ?>
+                </a>
+            </div>
+            <!-- start -->
+            <div class="mb-2 text-warning">
+                <?php
+                                   $fullStars = floor($p->rating);
                                     $halfStar  = ($p->rating - $fullStars >= 0.5) ? 1 : 0;
                                     $emptyStars = 5 - $fullStars - $halfStar;
 
@@ -114,27 +115,29 @@ $this->title = "Trang chủ";
                                     if ($halfStar) echo '<i class="fa fa-star-half-o"></i>';
                                     for ($i = 0; $i < $emptyStars; $i++) echo '<i class="fa fa-star-o"></i>';
                                     ?>
-                                    <span class="text-muted ms-2">(12 đánh giá)</span>
-                                </div>
-                            </a>
-                                <!-- <a href="#" class="btn btn-outline-success mt-auto">Mua</a> -->
-                                <button type="button" class=" add-to-cart-btn btn btn-outline-success mt-auto"
-                                    data-id="<?= $p->id ?>"
-                                    data-name="<?= Html::encode($p->name) ?>"
-                                    data-price="<?= $p->price * (100 - $p->discount) / 100 ?>"
-                                     data-image="<?= Html::encode($p->image) ?>">
-                                    <i class="bi bi-cart-plus"></i> Mua
-                                
-                                </button>
-                                
-                            </div>
-                        </div>
-                    
-                </div>
-            <?php endforeach; ?>
+                <span class="text-muted ms-2">(12 đánh giá)</span>
+            </div>
 
-
-
-
+            <!-- <a href="#" class="btn btn-outline-success mt-auto">Mua</a> -->
+            <?php if( $p->stock > 0): ?>
+            <button type="button" class=" add-to-cart-btn btn btn-outline-success mt-auto" data-id="<?= $p->id ?>"
+                data-name="<?= Html::encode($p->name) ?>" data-price="<?= $p->price * (100 - $p->discount) / 100 ?>"
+                data-image="<?= Html::encode($p->image) ?>">
+                <i class="bi bi-cart-plus"></i> Mua
+            </button>
+            <?php else: ?>
+            <div class=" text-center mt-auto text-body-tertiary text-bord text-uppercase fs-6">
+                TẠM HẾT HÀNG
+            </div>
+            <?php endif;   ?>
         </div>
     </div>
+
+</div>
+<?php endforeach; ?>
+
+
+
+
+</div>
+</div>

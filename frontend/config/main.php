@@ -18,11 +18,11 @@ return [
             'thousandSeparator' => '.',
             'currencyCode' => 'VND',
         ],
-        'user' => [
-            'identityClass' => 'common\models\User',
-            'enableAutoLogin' => true,
-            'identityCookie' => ['username' => '_frontendUser', 'httpOnly' => true],
-        ],
+        // 'user' => [
+        //     'identityClass' => 'common\models\User',
+        //     'enableAutoLogin' => true,
+        //     'identityCookie' => ['username' => '_frontendUser', 'httpOnly' => true],
+        // ],
         'request' => [
             'csrfParam' => '_csrf-frontend',
         ],
@@ -48,11 +48,14 @@ return [
             'errorAction' => 'site/error',
         ],
 
-        // 'urlManager' => [
-        //     'enablePrettyUrl' => true,
-        //     'showScriptName' => false,
-        //     'rules' => [],
-        // ],
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'enableStrictParsing' => false,
+            'rules' => [
+            'search' => 'site/search',
+            ],
+        ],
 
     ],
     'params' => $params,

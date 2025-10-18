@@ -15,11 +15,11 @@ AppAsset::register($this);
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
-    <?php
-    $this->registerJsFile('@web/js/cart.js', [
-     'depends' => [\yii\web\JqueryAsset::class],
-     ]);
-    ?>
+<?php
+$this->registerJsFile('@web/js/cart.js', [
+    'depends' => [\yii\web\JqueryAsset::class],
+]);
+?>
 
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
@@ -35,26 +35,28 @@ AppAsset::register($this);
 </head>
 
 <body style="background-color:#e9ecef;">
-    <?php $this->beginBody() ?>
+    <div class="wrapper">
+        <?php $this->beginBody() ?>
 
-    <!-- HEADER -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success sticky-top">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="/">🥦 VEGETABLE</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <div class="d-flex align-items-center border-radius-2 px-2">
-                        <input type="text" class="form-control me-2" placeholder="Tìm kiếm..." style="width:200px; " class="flex" onkeydown="if(event.key==='Enter'){ window.location.href='/site/product?search='+this.value; }">
-                        &nbsp;&nbsp;
-                    </div>
-                    <!-- <li class="nav-item"><?= Html::a('Trang chủ', ['/site/index'], ['class' => 'nav-link']) ?></li> -->
-                    <!-- <li class="nav-item"><?= Html::a('Sản phẩm', ['site/product'], ['class' => 'nav-link']) ?></li> -->
+        <!-- HEADER -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-success sticky-top">
+            <div class="container">
+                <a class="navbar-brand fw-bold" href="/">🥦 VEGETABLE</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <div class=" align-items-center border-radius-2 px-2">
+                            <input type="text" class="form-control me-2" placeholder="Tìm kiếm..." style="width:200px;"
+                                onkeydown="if(event.key==='Enter'){ window.location.href='/site/search?keyword='+this.value; }">
+                        </div>
 
-                    <!-- Giỏ hàng với badge số lượng -->
-                    <?php
+                        <!-- <li class="nav-item"><?= Html::a('Trang chủ', ['/site/index'], ['class' => 'nav-link']) ?></li> -->
+                        <!-- <li class="nav-item"><?= Html::a('Sản phẩm', ['site/product'], ['class' => 'nav-link']) ?></li> -->
+
+                        <!-- Giỏ hàng với badge số lượng -->
+                        <?php
                     $cookies = Yii::$app->request->cookies;
                     $cartCount = 0;
                     if ($cookies->has('cart')) {
@@ -62,78 +64,81 @@ AppAsset::register($this);
                         $cartCount = array_sum(array_column($cart, 'quantity'));
                     }
                     ?>
-                    <li class="nav-item position-relative" style="margin-right:10px;">
-                        <?= Html::a('<i class="bi bi-cart"></i>', ['site/cart'], [
+                        <li class="nav-item position-relative" style="margin-right:10px;">
+                            <?= Html::a('<i class="bi bi-cart"></i>', ['site/cart'], [
                             'class' => 'nav-link position-relative',
                             'encode' => false,
                             'title' => 'Giỏ hàng',
                             'data-bs-toggle' => 'tooltip',
                         ]) ?>
-
-                        <!-- Badge hiển thị số lượng -->
-                        <?php if ($cartCount > 0): ?>
+                            <!-- Badge hiển thị số lượng -->
+                            <?php if ($cartCount > 0): ?>
                             <span id="cart-count"
                                 class="position-absolute start-100 translate-middle badge rounded-circle bg-danger"
                                 style="font-size:10px; min-width:16px; height:16px; line-height:9px; top:15%">
+
                                 <?= $cartCount ?>
                             </span>
-                        <?php endif; ?>
-                    </li>
+                            <?php endif; ?>
+                        </li>
 
 
-                    </li> <?php if (Yii::$app->user->isGuest): ?>
+                        </li> <?php if (Yii::$app->user->isGuest): ?>
                         <li class="nav-item"><?= Html::a('Đăng nhập', ['site/login'], ['class' => 'nav-link']) ?></li>
                         <li class="nav-item"><?= Html::a('Đăng ký', ['site/signup'], ['class' => 'nav-link']) ?></li>
-                    <?php else: ?>
+                        <?php else: ?>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="accountDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
                                 Tài khoản (<?= Yii::$app->user->identity->username ?>)
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="accountDropdown">
                                 <li><?= Html::a('Hồ sơ', ['/site/profile'], ['class' => 'dropdown-item']) ?></li>
-                                <li><?= Html::a('Đổi mật khẩu', ['/site/change-password'], ['class' => 'dropdown-item']) ?></li>
+                                <li><?= Html::a('Đổi mật khẩu', ['/site/change-password'], ['class' => 'dropdown-item']) ?>
+                                </li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><?= Html::a('Đăng xuất', ['/site/logout'], ['class' => 'dropdown-item', 'data-method' => 'post']) ?></li>
+                                <li><?= Html::a('Đăng xuất', ['/site/logout'], ['class' => 'dropdown-item', 'data-method' => 'post']) ?>
+                                </li>
                             </ul>
                         </li>
 
-                    <?php endif; ?>
+                        <?php endif; ?>
 
-                    <!--DK user đăng nhập là admin thì hiện link admin -->
-                    <?php if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role == 0): ?>
+                        <!--DK user đăng nhập là admin thì hiện link admin -->
+                        <?php if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role == 0): ?>
                         <li class="nav-item">
                             <?= Html::a('Admin', 'http://localhost:8000/', ['class' => 'nav-link', 'target' => '_blank']) ?>
                         </li>
-                    <?php endif; ?>
-                </ul>
+                        <?php endif; ?>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
 
 
-    <!-- CONTENT -->
-    <main class="container mb-5">
-        <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs'] ?? []]) ?>
-        <?= $content ?>
+        <!-- CONTENT -->
+        <main class="container mb-5">
+            <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs'] ?? []]) ?>
+            <?= $content ?>
 
-    </main>
+        </main>
 
-    <!-- FOOTER -->
-    <footer class="bg-dark text-white text-center py-4 ">
-        <p>&copy; <?= date('Y') ?> Rau Củ Online. CTD.</p>
-        <p>
-            <a href="/site/about" class="text-white me-3">Về chúng tôi</a>
-            <a href="/site/contact" class="text-white">Liên hệ</a>
-        </p>
-    </footer>
+        <!-- FOOTER -->
+        <footer class="bg-dark text-white text-center py-4 bottom-0% footer">
+            <p>&copy; <?= date('Y') ?> Rau Củ Online. CTD.</p>
+            <p>
+                <a href="/site/about" class="text-white me-3">Về chúng tôi</a>
+                <a href="/site/contact" class="text-white">Liên hệ</a>
+            </p>
+        </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <?php $this->endBody() ?>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <?php $this->endBody() ?>
 
 
-    <?php if (Yii::$app->session->hasFlash('success')): ?>
+        <?php if (Yii::$app->session->hasFlash('success')): ?>
         <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content shadow-lg border-0">
@@ -157,20 +162,20 @@ AppAsset::register($this);
             var successModal = new bootstrap.Modal(document.getElementById('successModal'));
             successModal.show();
         </script>
-    <?php endif; ?>
+        <?php endif; ?>
 
 
-    <?php
+        <?php
     $csrfToken = Yii::$app->request->getCsrfToken();
     $addToCartUrl = \yii\helpers\Url::to(['site/add-to-cart']);
     $this->registerJs("
     window.csrfToken = '{$csrfToken}';
     window.addToCartUrl = '{$addToCartUrl}';
-", \yii\web\View::POS_HEAD);
+    ", \yii\web\View::POS_HEAD);
 
     $this->registerJsFile('@web/js/cart.js', ['depends' => [\yii\web\JqueryAsset::class]]);
     ?>
-
+    </div>
 </body>
 
 </html>
