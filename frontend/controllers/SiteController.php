@@ -17,6 +17,8 @@ use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
 use yii\web\NotFoundHttpException;
+use common\models\Category;
+use common\models\Review;
 
 
 /**
@@ -81,52 +83,59 @@ class SiteController extends Controller
     public function actionIndex()
     {
         $products = \common\models\Product::find()->all();
+        $category = Category::find()->all();
 
         return $this->render('index', [
-            'products' => $products
+            'products' => $products,
+            'category' => $category,
         ]);
     }
 
     public function actionSearch($keyword = null)
-    {        $query = Product::find();
-       
+    {
+        $query = Product::find();
 
-        if($keyword){
-            $query->andFilterWhere(['like','name', $keyword]);
+
+        if ($keyword) {
+            $query->andFilterWhere(['like', 'name', $keyword]);
         }
 
         $dataProvider = new \yii\data\ActiveDataProvider([
-            'query'=> $query,
+            'query' => $query,
             'pagination' => [
-                'pageSize'=> 10,
+                'pageSize' => 10,
             ]
         ]);
 
         return $this->render('search', [
-             'dataProvider' => $dataProvider,
-             'keyword' => $keyword,
+            'dataProvider' => $dataProvider,
+            'keyword' => $keyword,
         ]);
     }
 
     public function actionProductDetail($id)
     {
-        $product = \common\models\Product::findOne($id);
-        $category = \common\models\Category::findOne($product->category_id);
-
+        $product = Product::findOne($id);
         if (!$product) {
             throw new NotFoundHttpException('Sản phẩm không tồn tại.');
         }
 
-        $related = Product::find()
-            ->where(['category_id' => $product->category_id])
-            ->andWhere(['<>', 'id', $product->id])
-            ->limit(4)
+        $category = Category::findOne($product->category_id);
+
+        // Lấy danh sách review và tạo model review mới để form hoạt động
+        $review = Review::find()
+            ->where(['product_id' => $product->id])
+            ->orderBy(['created_at' => SORT_DESC])
             ->all();
+
+        $newReview = new Review();
+        $newReview->product_id = $product->id;
 
         return $this->render('product_detail', [
             'product' => $product,
             'category' => $category,
-            'related' => $related,
+            'review' => $review,
+            'newReview' => $newReview,
         ]);
     }
 
@@ -323,7 +332,7 @@ class SiteController extends Controller
     {
         return $this->render('product');
     }
-   
+
 
 
 
@@ -363,9 +372,11 @@ class SiteController extends Controller
             'expire' => time() + 7 * 24 * 3600
         ]));
 
+        $totalQty = array_sum(array_column($cart, 'quantity'));
         return [
             'success' => true,
-            'total' => array_sum(array_column($cart, 'quantity'))
+            'total' => $totalQty,           // tổng số lượng (nếu JS cần)
+            'cartCount' => count($cart)     // số sản phẩm khác nhau (distinct)
         ];
     }
 
@@ -389,9 +400,4 @@ class SiteController extends Controller
             ]
         );
     }
-
-   
-
- 
-
 }

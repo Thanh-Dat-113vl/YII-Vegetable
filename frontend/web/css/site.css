@@ -188,7 +188,6 @@ a.desc:after {
   transform: scale(1.05);
 }
 
-
 /* trong search */
 
 .product-card {
@@ -197,10 +196,14 @@ a.desc:after {
 }
 .product-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
 .card-title {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.col-lg-3.custom-width {
+  width: 20% !important;
 }

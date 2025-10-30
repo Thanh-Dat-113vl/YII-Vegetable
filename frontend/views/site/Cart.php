@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 $updateUrl = Url::to(['site/update-quantity']);
+$this->registerJs("var updateUrl = '$updateUrl';", \yii\web\View::POS_HEAD);
 
 
 $this->title = 'Giỏ hàng';
@@ -118,7 +119,7 @@ $ship = 15000;
                                     data-id="<?= $item['id'] ?>">＋</button>
                             </div>
                         </td>
-                        <td class="text-end fw-bold">
+                        <td class="text-end fw-bold subtotal" data-price="<?= $item['price'] ?>">
                             <?= number_format($subtotal, 0, ',', '.') ?>đ
                         </td>
                     </tr>
@@ -175,6 +176,7 @@ $(document).on('click', '.remove-item', function(e) {
         } else {
             alert("❌ " + res.message);
         }
+        updateCartBadge(res.cartCount);
     });
 });
 
@@ -197,56 +199,58 @@ function updateTotal(ship = 15000) {
     $('#total').text(total.toLocaleString('vi-VN') + ' đ');
 }
 
-// Google Map
-let map, marker, geocoder;
+// // Google Map
+// let map, marker, geocoder;
 
-function initMap() {
-    geocoder = new google.maps.Geocoder();
-    map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 10.762622, lng: 106.660172 },
-        zoom: 13
-    });
+// function initMap() {
+//     geocoder = new google.maps.Geocoder();
+//     map = new google.maps.Map(document.getElementById("map"), {
+//         center: { lat: 10.762622, lng: 106.660172 },
+//         zoom: 13
+//     });
 
-    const input = document.getElementById("address-input");
-    const autocomplete = new google.maps.places.Autocomplete(input);
-    autocomplete.bindTo("bounds", map);
+//     const input = document.getElementById("address-input");
+//     const autocomplete = new google.maps.places.Autocomplete(input);
+//     autocomplete.bindTo("bounds", map);
 
-    autocomplete.addListener("place_changed", function() {
-        const place = autocomplete.getPlace();
-        if (!place.geometry) return;
+//     autocomplete.addListener("place_changed", function() {
+//         const place = autocomplete.getPlace();
+//         if (!place.geometry) return;
 
-        map.setCenter(place.geometry.location);
-        map.setZoom(15);
+//         map.setCenter(place.geometry.location);
+//         map.setZoom(15);
 
-        if (marker) marker.setMap(null);
-        marker = new google.maps.Marker({
-            position: place.geometry.location,
-            map: map
-        });
+//         if (marker) marker.setMap(null);
+//         marker = new google.maps.Marker({
+//             position: place.geometry.location,
+//             map: map
+//         });
 
-        // Giả lập tính phí ship theo khoảng cách (BHX-style)
-        const store = { lat: 10.762622, lng: 106.660172 }; // cửa hàng tại Q1
-        const user = place.geometry.location;
-        const distance = google.maps.geometry.spherical.computeDistanceBetween(
-            new google.maps.LatLng(store),
-            new google.maps.LatLng(user)
-        );
+//         // Giả lập tính phí ship theo khoảng cách 
+//         const store = { lat: 10.762622, lng: 106.660172 }; // cửa hàng tại Q1
+//         const user = place.geometry.location;
+//         const distance = google.maps.geometry.spherical.computeDistanceBetween(
+//             new google.maps.LatLng(store),
+//             new google.maps.LatLng(user)
+//         );
 
-        let fee = 0;
-        if (distance <= 2000) fee = 0; // <= 2km free
-        else if (distance <= 5000) fee = 15000; // <= 5km
-        else if (distance <= 10000) fee = 30000; // <= 10km
-        else fee = 50000; // xa hơn
+//         let fee = 0;
+//         if (distance <= 2000) fee = 0; // <= 2km free
+//         else if (distance <= 5000) fee = 15000; // <= 5km
+//         else if (distance <= 10000) fee = 30000; // <= 10km
+//         else fee = 50000; // xa hơn
 
-        $('#shipping').text(fee.toLocaleString('vi-VN') + ' đ');
-        updateTotal(fee);
-    });
-}
+//         $('#shipping').text(fee.toLocaleString('vi-VN') + ' đ');
+//         updateTotal(fee);
+//     });
+// }
 //+ - số luong
 
 $(document).on('click', '.btn-plus, .btn-minus', function() {
     const id = $(this).data('id');
     const type = $(this).hasClass('btn-plus') ? 'plus' : 'minus';
+    const row = $(this).closest('tr');
+
     const quantityInput = $(this).closest('.input-group').find('.quantity-input');
     const subtotalCell = $(this).closest('tr').find('.subtotal');
     const totalText = $('#cart-total');
@@ -254,7 +258,7 @@ $(document).on('click', '.btn-plus, .btn-minus', function() {
 
 
      if (type === 'minus' && currentQty === 1) {
-        if (!confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng không? hả')) {
+        if (!confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng không?')) {
             return; 
         }
     }
@@ -273,7 +277,7 @@ $(document).on('click', '.btn-plus, .btn-minus', function() {
             }
 
             totalText.text(res.total + 'đ');
-            // updateCartBadge(res.cartCount); // 🔹 cập nhật badge
+            updateCartBadge(res.cartCount); // 🔹 cập nhật badge
         }
     });
 });

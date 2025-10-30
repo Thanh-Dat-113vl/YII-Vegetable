@@ -7,6 +7,28 @@ use yii\helpers\Url;
 
 ?>
 
+<!-- card sản phẩm  -->
+<div class="container my-4">
+    <div class="row row-cols-1 row-cols-md-5 g-4">
+
+        <!-- Card 1 -->
+        <div class="col">
+            <div class="card h-100 text-center shadow-sm">
+                <img src="https://via.placeholder.com/150" class="card-img-top p-3" alt="Dầu đậu nành Simply 2 lít">
+                <div class="card-body">
+                    <h6 class="card-title">Dầu đậu nành Simply 2 lít</h6>
+                    <p class="text-danger fw-bold fs-5 mb-1">115.000đ</p>
+                    <p class="text-muted text-decoration-line-through mb-1">132.000đ</p>
+                    <span class="badge bg-danger">-13%</span>
+                </div>
+                <div class="card-footer bg-white border-0">
+                    <button class="btn btn-success w-100">MUA</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="" style="min-height:100vh ;margin-bottom:20px">
     <div class="d-flex border-top border-bottom bg-light "
@@ -89,7 +111,7 @@ use yii\helpers\Url;
         </div> -->
 
 
-        <!-- 
+    <!-- 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             document.querySelectorAll(".add-to-cart").forEach(btn => {
