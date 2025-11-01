@@ -14,143 +14,156 @@ $ship = 15000;
 
 <div class="container py-4 bg-white">
     <?php if (!empty($cart)): ?>
-    <button class="btn btn-link text-dark" style="width:46px;" onclick="window.history.back();">
-        <i class="bi bi-chevron-left"></i> </button>
-    <h3 class="mb-3 fw-bold text-center"><?= Html::encode($this->title) ?></h3>
+        <button class="btn btn-link text-dark" style="width:46px;" onclick="window.history.back();">
+            <i class="bi bi-chevron-left"></i> </button>
+        <h3 class="mb-3 fw-bold text-center"><?= Html::encode($this->title) ?></h3>
 
-    <!-- Tabs giao hàng -->
-    <ul class="nav nav-pills mb-3" id="deliveryTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="ship-tab" data-bs-toggle="pill" data-bs-target="#ship" type="button"
-                role="tab">
-                Giao hàng tận nơi
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="store-tab" data-bs-toggle="pill" data-bs-target="#store" type="button"
-                role="tab">
-                Nhận tại cửa hàng
-            </button>
-        </li>
-    </ul>
+        <!-- Tabs giao hàng -->
+        <ul class="nav nav-pills mb-3" id="deliveryTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="ship-tab" data-bs-toggle="pill" data-bs-target="#ship" type="button"
+                    role="tab">
+                    Giao hàng tận nơi
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="store-tab" data-bs-toggle="pill" data-bs-target="#store" type="button"
+                    role="tab">
+                    Nhận tại cửa hàng
+                </button>
+            </li>
+        </ul>
 
-    <div class="tab-content mb-4" id="deliveryTabsContent">
-        <!-- Tab 1: Giao hàng tận nơi -->
-        <div class="tab-pane fade show active" id="ship" role="tabpanel">
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold">Giới tính</label><br>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="gender" id="male" checked>
-                        <label class="form-check-label" for="male">Anh</label>
+        <div class="tab-content mb-4" id="deliveryTabsContent">
+            <!-- Tab 1: Giao hàng tận nơi -->
+            <div class="tab-pane fade show active" id="ship" role="tabpanel">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Giới tính</label><br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="gender" id="male" checked>
+                            <label class="form-check-label" for="male">Anh</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="gender" id="female">
+                            <label class="form-check-label" for="female">Chị</label>
+                        </div>
                     </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="gender" id="female">
-                        <label class="form-check-label" for="female">Chị</label>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Tên người nhận</label>
+                        <input type="text" class="form-control" placeholder="Nhập tên người nhận"
+                            value="<?= $user ? Html::encode($user->fullname ?? $user->username) : '' ?>" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Số điện thoại</label>
+                        <input type="text" class="form-control" placeholder="Nhập số điện thoại"
+                            value="<?= $user ? Html::encode($user->phone ?? '') : '' ?>" readonly>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-semibold">Phí giao hàng</label>
+                        <input type="text" class="form-control" value="15.000đ" readonly>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <label class="form-label fw-semibold">Tên người nhận</label>
-                    <input type="text" class="form-control" placeholder="Nhập tên người nhận"
-                        value="<?= $user ? Html::encode($user->fullname ?? $user->username) : '' ?>" readonly>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold">Số điện thoại</label>
-                    <input type="text" class="form-control" placeholder="Nhập số điện thoại"
-                        value="<?= $user ? Html::encode($user->phone ?? '') : '' ?>" readonly>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label fw-semibold">Phí giao hàng</label>
-                    <input type="text" class="form-control" value="15.000đ" readonly>
+            </div>
+
+            <!-- Tab 2: Nhận tại cửa hàng -->
+            <div class="tab-pane fade" id="store" role="tabpanel">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Chọn cửa hàng nhận hàng</label>
+                        <select class="form-select">
+                            <option>BHX Thủ Đức (Ngã 4 Bình Thái)</option>
+                            <option>BHX Quận 9 (Đỗ Xuân Hợp)</option>
+                            <option>BHX Quận 7 (Huỳnh Tấn Phát)</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Tab 2: Nhận tại cửa hàng -->
-        <div class="tab-pane fade" id="store" role="tabpanel">
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">Chọn cửa hàng nhận hàng</label>
-                    <select class="form-select">
-                        <option>BHX Thủ Đức (Ngã 4 Bình Thái)</option>
-                        <option>BHX Quận 9 (Đỗ Xuân Hợp)</option>
-                        <option>BHX Quận 7 (Huỳnh Tấn Phát)</option>
-                    </select>
-                </div>
+        <!-- Danh sách sản phẩm -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-success text-white fw-bold">
+                Đơn hàng của bạn
             </div>
-        </div>
-    </div>
-
-    <!-- Danh sách sản phẩm -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-success text-white fw-bold">
-            Đơn hàng của bạn
-        </div>
-        <div class="card-body p-0">
-            <table class="table align-middle mb-0">
-                <tbody>
-                    <?php foreach ($cart as $item): ?>
-                    <?php
+            <div class="card-body p-0">
+                <table class="table align-middle mb-0">
+                    <tbody>
+                        <?php foreach ($cart as $item): ?>
+                            <?php
                             $subtotal = $item['price'] * $item['quantity'];
                             $total += $subtotal;
                             ?>
-                    <tr>
-                        <td style="width:80px;">
-                            <img src="<?= Yii::getAlias('@web/uploads/' . Html::encode($item['image']) ) ?>" width="70"
-                                class="rounded">
+                            <tr>
+                                <td style="width:80px;">
+                                    <img src="<?= Yii::getAlias('@web/uploads/' . Html::encode($item['image'])) ?>" width="70"
+                                        class="rounded">
 
-                        </td>
-                        <td>
-                            <div class="fw-semibold"><?= Html::encode($item['name']) ?></div>
-                            <div class="text-muted small">
-                                Giá: <?= number_format($item['price'], 0, ',', '.') ?>đ
-                            </div>
-                            <a href="#" class="text-danger small remove-item" data-id="<?= $item['id']?>">
-                                Xóa
-                            </a>
-                        </td>
-                        <td class="text-end ">
-                            <div class="input-group input-group-sm justify-content-end" style="max-width:110px;">
-                                <button class="btn btn-outline-secondary btn-minus"
-                                    data-id="<?= $item['id'] ?>">−</button>
-                                <input type="text" class="form-control text-center quantity-input"
-                                    value="<?= $item['quantity'] ?>" readonly>
-                                <button class="btn btn-outline-secondary btn-plus"
-                                    data-id="<?= $item['id'] ?>">＋</button>
-                            </div>
-                        </td>
-                        <td class="text-end fw-bold subtotal" data-price="<?= $item['price'] ?>">
-                            <?= number_format($subtotal, 0, ',', '.') ?>đ
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                                </td>
+                                <td>
+                                    <div class="fw-semibold"><?= Html::encode($item['name']) ?></div>
+                                    <div class="text-muted small">
+                                        Giá: <?= number_format($item['price'], 0, ',', '.') ?>đ
+                                    </div>
+                                    <a href="#" class="text-danger small remove-item" data-id="<?= $item['id'] ?>">
+                                        Xóa
+                                    </a>
+                                </td>
+                                <td class="text-end ">
+                                    <div class="input-group input-group-sm justify-content-end" style="max-width:110px;">
+                                        <button class="btn btn-outline-secondary btn-minus"
+                                            data-id="<?= $item['id'] ?>">−</button>
+                                        <input type="text" class="form-control text-center quantity-input"
+                                            value="<?= $item['quantity'] ?>" readonly>
+                                        <button class="btn btn-outline-secondary btn-plus"
+                                            data-id="<?= $item['id'] ?>">＋</button>
+                                    </div>
+                                </td>
+                                <td class="text-end fw-bold subtotal" data-price="<?= $item['price'] ?>">
+                                    <?= number_format($subtotal, 0, ',', '.') ?>đ
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
 
+            </div>
         </div>
-    </div>
 
-    <!-- Tổng tiền & Đặt hàng -->
-    <div class="d-flex justify-content-between align-items-center bg-light border-top py-3 px-4">
-        <div class="fw-bold fs-5 text-success">
-            Tổng cộng:
-            <span id="cart-total"><?= number_format($total, 0, ',', '.') ?>đ</span>
+        <!-- Tổng tiền & Đặt hàng -->
+        <div class="d-flex justify-content-between align-items-center bg-light border-top py-3 px-4">
+            <div class="fw-bold fs-5 text-success">
+                Tổng cộng:
+                <span id="cart-total"><?= number_format($total, 0, ',', '.') ?>đ</span>
+            </div>
+            <button class="btn btn-success px-5 py-2 fw-bold text-uppercase">
+                <i class="bi bi-cart-check"></i> Đặt hàng
+            </button>
         </div>
-        <button class="btn btn-success px-5 py-2 fw-bold text-uppercase">
-            <i class="bi bi-cart-check"></i> Đặt hàng
-        </button>
-    </div>
     <?php else: ?>
-    <button class="btn btn-link text-dark" style="width:46px;" onclick="window.history.back();">
-        <i class="bi bi-chevron-left "></i> </button>
-    <div class=" text-center mx-auto mt-4" style="max-width: 400px;">
+        <div class="container py-2">
+            <div class="d-flex align-items-center mb-3">
+                <button class="btn btn-link text-dark p-0 me-2" style="width:46px;" onclick="window.history.back();">
+                    <i class="bi bi-chevron-left fs-5"></i>
+                </button>
+                <h5 class="flex-grow-1 text-center m-0 fw-semibold">Giỏ hàng của Bạn</h5>
+                <div style="width:46px;"></div>
+            </div>
 
-        <h5 class="card-title mb-3">Giỏ hàng của Bạn</h5>
-        <i class="bi bi-cart"></i>
-        <a href="/site/index" class="btn btn-success mb-2">Tiếp tục mua hàng</a>
-        <p class="card-text text-muted">Vẫn còn 10.000+ sản phẩm đang chờ</p>
+            <div class="text-center mt-5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" fill="currentColor"
+                    class="bi bi-cart4 text-success mb-3" viewBox="0 0 16 16">
+                    <path
+                        d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5M3.14 5l.5 2H5V5zM6 5v2h2V5zm3 0v2h2V5zm3 0v2h1.36l.5-2zm1.11 3H12v2h.61zM11 8H9v2h2zM8 8H6v2h2zM5 8H3.89l.5 2H5zm0 5a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0m9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0" />
+                </svg>
 
-    </div>
+                <div>
+                    <a href="/" class="btn btn-success px-4 mb-2">Tiếp tục mua hàng</a>
+                    <p class="text-muted mb-0">Vẫn còn 10.000+ sản phẩm đang chờ</p>
+                </div>
+            </div>
+        </div>
+
     <?php endif; ?>
 </div>
 

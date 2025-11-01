@@ -5,7 +5,6 @@ namespace frontend\controllers;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\Response;
 use common\models\Product;
 use common\models\Review;
 
@@ -41,29 +40,23 @@ class ProductController extends Controller
     }
     public function actionAddReview($id)
     {
-        if (Yii::$app->user->isGuest) {
-            if (Yii::$app->request->isAjax) {
-                Yii::$app->response->statusCode = 401;
-                return ['success' => false, 'message' => 'Vui lòng đăng nhập'];
-            }
-            return $this->redirect(['site/login']);
-        }
         $product = Product::findOne($id);
         if (!$product) {
-            throw new \yii\web\NotFoundHttpException("Sản phẩm không tồn tại");
-        }
-        $review = new Review();
-
-        if ($review->load(Yii::$app->request->post()) && $review->save()) {
-            Yii::$app->session->setFlash('success', 'Đánh giá của bạn đã được gửi.');
-            return $this->redirect(['product-detail', 'id' => $id]);
+            throw new NotFoundHttpException("Sản phẩm không tồn tại");
         }
 
-        return $this->renderAjax('_review_form', [
-            'product' => $product,
-            'review' => $review,
-        ]);
+        $model = new Review();
+        $model->product_id = $id;
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Cảm ơn bạn đã gửi đánh giá! Chúng tôi sẽ duyệt sớm.');
+            return $this->redirect(['product/view', 'id' => $id]);
+        }
+
+        throw new NotFoundHttpException("Trang không tồn tại");
     }
+
+
 
     // public function actionAddReview($id)
     // {

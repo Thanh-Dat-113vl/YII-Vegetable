@@ -48,72 +48,67 @@ $this->registerJsFile('@web/js/cart.js', [
             <div class="container">
                 <a class="navbar-brand fw-bold" href="/">VEGETABLE</a>
 
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <div class=" border-radius-2  ">
-                            <input type="text" class="form-control me-2 rounded-pill" placeholder="Tìm kiếm..." style="width:250px;"
-                                onkeydown="if(event.key==='Enter'){ window.location.href='/site/search?keyword='+this.value; }">
+                    <!-- search: icon inside input -->
+                    <form class="d-flex ms-auto my-2 my-lg-0" role="search"
+                        onsubmit="event.preventDefault(); window.location.href='<?= Url::to(['site/search']) ?>?keyword='+encodeURIComponent(this.querySelector('[name=keyword]').value);">
+                        <div class="input-group" style="min-width:160px; max-width:420px;">
+                            <span class="input-group-text bg-white border-1" id="search-addon" style="border-radius:999px 0 0 999px;">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input class="form-control" type="search" placeholder="Tìm kiếm..." aria-label="Search"
+                                name="keyword" style="border-radius:0 999px 999px 0;" />
                         </div>
+                    </form>
 
-                        <!-- <li class="nav-item"><?= Html::a('Trang chủ', ['/site/index'], ['class' => 'nav-link']) ?></li> -->
-                        <!-- <li class="nav-item"><?= Html::a('Sản phẩm', ['site/product'], ['class' => 'nav-link']) ?></li> -->
-
-                        <!-- Giỏ hàng với badge số lượng -->
+                    <ul class="navbar-nav ms-auto align-items-lg-center">
                         <?php
                         $cookies = Yii::$app->request->cookies;
                         $cartCount = 0;
                         if ($cookies->has('cart')) {
                             $cart = json_decode($cookies->getValue('cart'), true);
-                            $cartCount = count($cart);
+                            $cartCount = is_array($cart) ? count($cart) : 0;
                         }
                         ?>
-                        <li class="nav-item position-relative" style="margin-right:10px;">
+                        <li class="nav-item position-relative me-2">
                             <?= Html::a('<i class="bi bi-cart"></i>', ['site/cart'], [
                                 'class' => 'nav-link position-relative',
                                 'encode' => false,
                                 'title' => 'Giỏ hàng',
-                                'data-bs-toggle' => 'tooltip',
                             ]) ?>
-                            <!-- Badge hiển thị số lượng -->
                             <?php if ($cartCount > 0): ?>
-                                <span id="cart-count"
-                                    class="position-absolute start-100 translate-middle badge rounded-circle bg-danger"
-                                    style="font-size:10px; min-width:16px; height:16px; line-height:9px; top:15%">
-
-                                    <?= $cartCount ?>
-                                </span>
+                                <span id="cart-count" class="position-absolute start-100 translate-middle badge rounded-circle bg-danger"
+                                    style="font-size:10px; min-width:16px; height:16px; line-height:9px; top:10%"><?= $cartCount ?></span>
                             <?php endif; ?>
                         </li>
 
-                        <!-- Đăng nhập/Đăng ký hoặc Tài khoản -->
-                        </li> <?php if (Yii::$app->user->isGuest): ?>
-                            <li class="nav-item"><?= Html::a('Đăng nhập', ['site/login'], ['class' => 'nav-link']) ?></li>
-                            <li class="nav-item"><?= Html::a('Đăng ký', ['site/signup'], ['class' => 'nav-link']) ?></li>
+                        <?php if (Yii::$app->user->isGuest): ?>
+                            <li class="nav-item"><a class="nav-link" href="<?= Url::to(['site/login']) ?>">Đăng nhập</a></li>
+                            <li class="nav-item"><a class="nav-link" href="<?= Url::to(['site/signup']) ?>">Đăng ký</a></li>
                         <?php else: ?>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="accountDropdown" role="button"
                                     data-bs-toggle="dropdown" aria-expanded="false">
-                                    Tài khoản (<?= Yii::$app->user->identity->username ?>)
+                                    Tài khoản (<?= Html::encode(Yii::$app->user->identity->username) ?>)
                                 </a>
-                                <ul class="dropdown-menu" aria-labelledby="accountDropdown">
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
                                     <li><?= Html::a('Hồ sơ', ['/site/profile'], ['class' => 'dropdown-item']) ?></li>
-                                    <li><?= Html::a('Đổi mật khẩu', ['/site/change-password'], ['class' => 'dropdown-item']) ?>
-                                    </li>
+                                    <li><?= Html::a('Đổi mật khẩu', ['/site/change-password'], ['class' => 'dropdown-item']) ?></li>
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
-                                    <li><?= Html::a('Đăng xuất', ['/site/logout'], ['class' => 'dropdown-item', 'data-method' => 'post']) ?>
-                                    </li>
+                                    <li><?= Html::a('Đăng xuất', ['/site/logout'], ['class' => 'dropdown-item', 'data-method' => 'post']) ?></li>
                                 </ul>
                             </li>
-
                         <?php endif; ?>
 
-                        <!--DK user đăng nhập là admin thì hiện link admin -->
                         <?php if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role == 0): ?>
-                            <li class="nav-item">
-                                <?= Html::a('Admin', 'http://localhost:8000/', ['class' => 'nav-link', 'target' => '_blank']) ?>
-                            </li>
+                            <li class="nav-item"><a class="nav-link" href="http://localhost:8000/" target="_blank">Admin</a></li>
                         <?php endif; ?>
                     </ul>
                 </div>

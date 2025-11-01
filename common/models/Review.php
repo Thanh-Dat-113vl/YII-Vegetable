@@ -26,14 +26,15 @@ class Review extends ActiveRecord
     public function rules()
     {
         return [
-            [['product_id', 'user_id', 'rating', 'review_name', 'review_phone'], 'required'],
-            [['product_id', 'user_id', 'rating'], 'integer'],
-            ['rating', 'integer', 'min' => 1, 'max' => 5],
-
-            ['comment', 'string', 'max' => 1000],
-            ['created_at', 'safe'],
+            [['rating', 'comment', 'review_name', 'review_phone'], 'required'],
+            [['rating', 'status'], 'integer'],
+            [['comment'], 'string'],
+            [['review_name'], 'string', 'max' => 255],
+            [['review_phone'], 'string', 'max' => 20],
+            [['status'], 'default', 'value' => 0], // mặc định là chờ duyệt
         ];
     }
+
 
     public function beforeSave($insert)
     {

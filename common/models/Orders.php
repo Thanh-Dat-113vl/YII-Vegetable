@@ -17,12 +17,18 @@ use yii\db\ActiveRecord;
  * @property float|null $shipping_fee
  * @property string|null $created_at
  * @property string|null $updated_at
+ * @property string $order_code
  *
  * @property User $user
  * @property OrderItem[] $items
  */
 class Orders extends ActiveRecord
 {
+    // trạng thái đơn hàng
+    public const STATUS_PENDING = 1;   // xác nhận
+    public const STATUS_SHIPPING = 2;  // giao hàng
+    public const STATUS_COMPLETED = 3; // nhận hàng / hoàn tất
+
     public static function tableName()
     {
         return 'orders';
@@ -36,6 +42,8 @@ class Orders extends ActiveRecord
             [['shipping_address'], 'string'],
             [['status', 'payment_method'], 'string', 'max' => 50],
             [['created_at', 'updated_at'], 'safe'],
+            [['order_code'], 'string', 'max' => 50],
+            [['order_code'], 'unique'],
         ];
     }
 
@@ -51,6 +59,7 @@ class Orders extends ActiveRecord
             'shipping_fee' => 'Phí vận chuyển',
             'created_at' => 'Ngày tạo',
             'updated_at' => 'Ngày cập nhật',
+            'order_code' => 'Mã đơn hàng',
         ];
     }
 
@@ -72,10 +81,47 @@ class Orders extends ActiveRecord
         if (parent::beforeSave($insert)) {
             if ($this->isNewRecord) {
                 $this->created_at = date('Y-m-d H:i:s');
+                // mặc định trạng thái khi tạo là pending (xác nhận)
+                if ($this->status === null) {
+                    $this->status = self::STATUS_PENDING;
+                }
+                if (empty($this->order_code)) {
+                    $this->order_code = self::generateOrderCode();
+                }
             }
             $this->updated_at = date('Y-m-d H:i:s');
             return true;
         }
         return false;
+    }
+
+    /**
+     * Generate order code like ORD202511010001
+     * Uses count of today's orders to produce 4-digit sequence.
+     */
+    public static function generateOrderCode(): string
+    {
+        $prefix = 'ORD' . date('Ymd');
+        // count today's orders
+        $count = (int) self::find()->where(['like', 'order_code', $prefix, false])->count();
+        $seq = $count + 1;
+        return $prefix . str_pad((string)$seq, 4, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Trả label trạng thái
+     */
+    public function getStatusLabel(): string
+    {
+        switch ((int)$this->status) {
+            case self::STATUS_PENDING:
+                return 'Xác nhận';
+            case self::STATUS_SHIPPING:
+                return 'Đang giao';
+            case self::STATUS_COMPLETED:
+                return 'Đã nhận';
+            default:
+                return 'Không rõ';
+        }
     }
 }

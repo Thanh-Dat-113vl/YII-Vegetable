@@ -53,7 +53,9 @@ return [
             'showScriptName' => false,
             'enableStrictParsing' => false,
             'rules' => [
-            'search' => 'site/search',
+                'search' => 'site/search',
+                'product/add-review/<id:\d+>' => 'product/add-review',
+
             ],
         ],
 
