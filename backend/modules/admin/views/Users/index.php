@@ -27,20 +27,20 @@ $this->title = 'Manage Users Accounts';
             </button>
         </div>
 
-        <p>
+        <!-- <p>
             <?= \yii\helpers\Html::a('📧 Test Mail', ['users/test-mail'], [
                 'class' => 'btn btn-primary',
                 'data-method' => 'post'
             ]) ?>
 
-            
-        </p>
+
+        </p> -->
 
         <p>
-    <button type="button" class="btn btn-primary" id="btn-test-mail">
+            <!-- <button type="button" class="btn btn-primary" id="btn-test-mail">
         📧 Test Mail ok
-    </button>
-</p>
+    </button> -->
+        </p>
 
 
 
