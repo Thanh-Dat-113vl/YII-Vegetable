@@ -25,9 +25,11 @@ use yii\db\ActiveRecord;
 class Orders extends ActiveRecord
 {
     // trạng thái đơn hàng
-    public const STATUS_PENDING = 1;   // xác nhận
-    public const STATUS_SHIPPING = 2;  // giao hàng
-    public const STATUS_COMPLETED = 3; // nhận hàng / hoàn tất
+    public const STATUS_PENDING = 'pending';   // xác nhận
+    public const STATUS_CONFIRMED = 'comfirmed';
+    public const STATUS_SHIPPING = 'shipping';  // giao hàng
+    public const STATUS_COMPLETED = 'completed';   // nhận hàng / hoàn tất
+    public const STATUS_CANCELED = 'canceled'; // hủy đơn hàng
 
     public static function tableName()
     {
@@ -37,12 +39,11 @@ class Orders extends ActiveRecord
     public function rules()
     {
         return [
+            [['user_id', 'order_code', 'status', 'payment_method'], 'required'],
             [['user_id'], 'integer'],
-            [['total_price', 'shipping_fee'], 'number'],
-            [['shipping_address'], 'string'],
-            [['status', 'payment_method'], 'string', 'max' => 50],
+            [['shipping_address'], 'string', 'max' => 255],
+            [['status', 'payment_method', 'order_code'], 'string', 'max' => 50],
             [['created_at', 'updated_at'], 'safe'],
-            [['order_code'], 'string', 'max' => 50],
             [['order_code'], 'unique'],
         ];
     }
@@ -52,7 +53,7 @@ class Orders extends ActiveRecord
         return [
             'id' => 'Mã đơn hàng',
             'user_id' => 'Khách hàng',
-            'total_price' => 'Tổng tiền',
+            'totalPrice' => 'Tổng tiền',
             'status' => 'Trạng thái',
             'payment_method' => 'Phương thức thanh toán',
             'shipping_address' => 'Địa chỉ giao hàng',
@@ -115,13 +116,15 @@ class Orders extends ActiveRecord
     {
         switch ((int)$this->status) {
             case self::STATUS_PENDING:
-                return 'Xác nhận';
+                return 'chờ xác nhận';
             case self::STATUS_SHIPPING:
                 return 'Đang giao';
             case self::STATUS_COMPLETED:
                 return 'Đã nhận';
+            case self::STATUS_CANCELED:
+                return 'Đã hủy';
             default:
-                return 'Không rõ';
+                return 'Chờ xác nhận';
         }
     }
 }

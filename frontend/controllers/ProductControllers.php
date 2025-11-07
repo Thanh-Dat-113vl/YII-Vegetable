@@ -7,6 +7,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use common\models\Product;
 use common\models\Review;
+use yii\helpers\Html;
 
 class ProductController extends Controller
 {
@@ -47,10 +48,34 @@ class ProductController extends Controller
 
         $model = new Review();
         $model->product_id = $id;
+        $user = Yii::$app->user->identity ?? null;
+        if ($user) {
+            $model->user_id = $user->id;
+        }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('success', 'Cảm ơn bạn đã gửi đánh giá! Chúng tôi sẽ duyệt sớm.');
-            return $this->redirect(['product/view', 'id' => $id]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->created_at = date('Y-m-d H:i:s');
+            if ($model->save()) {
+                if (Yii::$app->request->isAjax) {
+                    Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                    return [
+                        'success' => true,
+                        'review' => [
+                            'username' => $user ? Html::encode($user->username) : 'Người dùng',
+                            'rating' => (int)$model->rating,
+                            'comment' => Html::encode($model->comment),
+                            'created_at' => Yii::$app->formatter->asDatetime($model->created_at),
+                        ],
+                    ];
+                }
+                Yii::$app->session->setFlash('success', 'Cảm ơn bạn đã gửi đánh giá! Chúng tôi sẽ duyệt sớm.');
+                return $this->redirect(['product/view', 'id' => $id]);
+            } else {
+                if (Yii::$app->request->isAjax) {
+                    Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                    return ['success' => false, 'errors' => $model->getErrors()];
+                }
+            }
         }
 
         throw new NotFoundHttpException("Trang không tồn tại");

@@ -72,6 +72,7 @@ class Category extends ActiveRecord
      */
     public function beforeSave($insert)
     {
+        // $this->image = null;
         if (parent::beforeSave($insert)) {
             if (empty($this->slug)) {
                 $name = (string) ($this->name ?? '');

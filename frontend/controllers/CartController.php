@@ -8,6 +8,8 @@ use yii\db\Transaction;
 use common\models\Product;
 use common\models\Orders;
 use common\models\OrderItem;
+use yii\web\Response;
+use yii\helpers\Url;
 
 class CartController extends Controller
 {
@@ -23,134 +25,124 @@ class CartController extends Controller
     {
         $cart = Yii::$app->session->get('cart', []);
         $products = Product::find()->where(['id' => array_keys($cart)])->all();
-        return $this->render('Cart', compact('products', 'cart'));
+        return $this->redirect(['site/index']);
     }
+
 
     public function actionCheckout()
     {
-        $request = Yii::$app->request;
         $cookies = Yii::$app->request->cookies;
         $cart = [];
 
+        $user = Yii::$app->user->isGuest ? null : Yii::$app->user->identity;
+
         if ($cookies->has('cart')) {
-            $cart = json_decode($cookies->getValue('cart'), true) ?: [];
-        } else {
-            $sessionCart = Yii::$app->session->get('cart', []);
-            if (!empty($sessionCart)) {
-                $productIds = array_keys($sessionCart);
-                $products = Product::find()->where(['id' => $productIds])->all();
-                foreach ($products as $p) {
-                    $id = (string)$p->id;
-                    $qty = (int)($sessionCart[$id] ?? 0);
-                    if ($qty <= 0) continue;
-                    $priceSale = $p->price * (100 - ($p->discount ?? 0)) / 100;
-                    $cart[$id] = [
-                        'id' => $p->id,
-                        'name' => $p->name,
-                        'price' => (float)$priceSale,
-                        'quantity' => $qty,
-                        'image' => $p->image ?? '',
-                    ];
-                }
-            }
+            $cart = json_decode($cookies->getValue('cart'), true);
         }
 
         if (empty($cart)) {
-            Yii::$app->session->setFlash('warning', 'Giỏ hàng trống.');
-            return $this->redirect(['site/index']);
+            Yii::$app->session->setFlash('error', 'Giỏ hàng trống!');
+            return $this->redirect(['site/cart']);
         }
 
-        if ($request->isPost) {
-            $post = $request->post();
-            $paymentMethod = $post['payment'] ?? 'cod';
-            $shippingAddress = $post['address'] ?? ($post['shipping_address'] ?? '');
-            $shippingFee = (float)($post['shipping_fee'] ?? 0);
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            // Tạo đơn hàng
+            $order = new Orders();
+            $order->user_id = $user ? $user->id : null;
+            $order->order_code = 'ORD' . time();
+            // $order->name = $user ? $user->username : 'Khách';
+            // $order->phone = Yii::$app->request->post('phone');
+            $order->payment_method = Yii::$app->request->post('payment');
+            $order->status = 'pending';
+            $order->payment_method = Yii::$app->request->post('payment');
+            $totalPrice = 0;
+            $order->created_at = date('Y-m-d H:i:s');
+            $order->updated_at = date('Y-m-d H:i:s');
+            $order->payment_method = Yii::$app->request->post('payment');
 
-            $db = Yii::$app->db;
-            $transaction = $db->beginTransaction(Transaction::SERIALIZABLE);
-            try {
-                $order = new Orders();
-                $order->user_id = Yii::$app->user->id ?? null;
-                $order->payment_method = $paymentMethod;
-                $order->shipping_address = $shippingAddress;
-                // $order->shipping_fee = $shippingFee;
-                $order->total_price = 0;
-                $order->status = Orders::STATUS_PENDING;
-                if (!$order->save()) {
-                    throw new \RuntimeException('Không thể tạo đơn hàng: ' . json_encode($order->getErrors()));
-                }
 
-                $total = 0;
-                foreach ($cart as $id => $item) {
-                    $product = Product::findOne($item['id']);
-                    if (!$product) {
-                        throw new \RuntimeException("Sản phẩm #{$item['id']} không tồn tại.");
-                    }
-
-                    $qty = (int)$item['quantity'];
-                    if ($qty <= 0) continue;
-
-                    if (isset($product->stock) && $product->stock < $qty) {
-                        throw new \RuntimeException("Sản phẩm {$product->name} chỉ còn {$product->stock} trong kho.");
-                    }
-
-                    $price = (float)$item['price'];
-                    $orderItem = new OrderItem();
-                    $orderItem->order_id = $order->id;
-                    $orderItem->product_id = $product->id;
-                    $orderItem->quantity = $qty;
-                    $orderItem->price = $price;
-                    if (!$orderItem->save()) {
-                        throw new \RuntimeException('Không thể lưu item: ' . json_encode($orderItem->getErrors()));
-                    }
-
-                    if (isset($product->stock)) {
-                        $product->stock = max(0, $product->stock - $qty);
-                        $product->save(false);
-                    }
-
-                    $total += $price * $qty;
-                }
-
-                $order->total_price = $total + $shippingFee;
-                $order->save(false);
-
-                $transaction->commit();
-
-                // remove cart cookie/session
-                if ($cookies->has('cart')) {
-                    Yii::$app->response->cookies->remove('cart');
-                }
-                Yii::$app->session->remove('cart');
-
-                // send email confirmation if user email exists
-                if ($order->user && !empty($order->user->email)) {
-                    try {
-                        Yii::$app->mailer->compose(
-                            ['html' => '@frontend/mail/order-confirm-html', 'text' => '@frontend/mail/order-confirm-text'],
-                            ['order' => $order]
-                        )
-                            ->setTo($order->user->email)
-                            ->setFrom([Yii::$app->params['adminEmail'] ?? 'no-reply@example.com' => 'VEGETABLE'])
-                            ->setSubject('Xác nhận đơn hàng ' . $order->order_code)
-                            ->send();
-                    } catch (\Throwable $e) {
-                        Yii::error('Mail send error: ' . $e->getMessage(), __METHOD__);
-                    }
-                }
-
-                Yii::$app->session->setFlash('success', 'Đặt hàng thành công. Mã đơn: ' . $order->order_code);
-                return $this->render('success', ['order' => $order]);
-            } catch (\Throwable $e) {
-                $transaction->rollBack();
-                Yii::error($e->getMessage(), __METHOD__);
-                Yii::$app->session->setFlash('error', 'Lỗi khi tạo đơn hàng: ' . $e->getMessage());
-                return $this->redirect(['site/index']);
+            // 🔹 Kiểm tra loại giao hàng
+            $deliveryType = Yii::$app->request->post('delivery_type');
+            if ($deliveryType === 'store') {
+                $order->delivery_type = 'store';
+                $order->shipping_address = null;
+                $order->store_name = Yii::$app->request->post('store_name');
+                $order->phone = $user ? $user->phone : Yii::$app->request->post('phone');
+                $shipping_fee = 0;
+            } else {
+                $order->delivery_type = 'delivery';
+                $order->shipping_address = Yii::$app->request->post('address');
+                $order->phone = $user ? $user->phone : Yii::$app->request->post('phone');
+                $shipping_fee = 15000;
             }
-        }
+            $order->save();
+            $total = 0;
 
-        // render checkout form
-        return $this->render('checkout', ['cart' => $cart]);
+            // Tạo các mục đơn hàng
+            foreach ($cart as $item) {
+
+                $product = Product::findOne($item['id']);
+                if (!$product) {
+                    throw new \RuntimeException("Sản phẩm #{$item['id']} không tồn tại.");
+                }
+
+                $qty = (int)$item['quantity'];
+                if ($qty <= 0) {
+                    continue;
+                }
+
+                // Kiểm tra tồn kho (nếu có)
+                if (isset($product->stock) && $product->stock !== null && $product->stock < $qty) {
+                    throw new \RuntimeException("Sản phẩm {$product->name} chỉ còn {$product->stock} trong kho.");
+                }
+
+                $orderItem = new OrderItem();
+                $orderItem->order_id = $order->id;
+                $orderItem->product_id = $item['id'];
+                $orderItem->name = $item['name'];
+                $orderItem->quantity = $item['quantity'];
+                $orderItem->price = $item['price'];
+                $orderItem->save(false);
+
+                if (isset($product->stock) && $product->stock !== null) {
+                    // Cập nhật lại tồn kho
+                    $product->stock = max(0, $product->stock - $qty);
+                    Yii::$app->db->createCommand("
+                        UPDATE product
+                        SET stock = GREATEST(stock - :qty, 0)
+                        WHERE id = :id
+                    ")->bindValues([':qty' => $qty, ':id' => $product->id])->execute();
+                }
+
+
+                $total += $item['price'] * $item['quantity'];
+            }
+            $order->total_price = $total + $shipping_fee;
+            $order->save(false);
+
+            // 🔹 Xóa giỏ hàng trong cookie
+            Yii::$app->response->cookies->remove('cart');
+
+            // 🔹 Commit giao dịch
+            $transaction->commit();
+
+            Yii::$app->session->setFlash('success', "Đặt hàng thành công! Mã đơn hàng: {$order->order_code}");
+            if (Yii::$app->request->isAjax) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return [
+                    'success' => true,
+                    'order_code' => $order->order_code,
+                    'redirect' => Url::to(['cart/success', 'id' => $order->id]),
+                ];
+            }
+            // non-AJAX: render trang success
+            return $this->render('success', ['order' => $order]);
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            Yii::$app->session->setFlash('error', 'Đặt hàng thất bại: ' . $e->getMessage());
+            return $this->redirect(['cart/index']);
+        }
     }
 
     public function actionUpdate()

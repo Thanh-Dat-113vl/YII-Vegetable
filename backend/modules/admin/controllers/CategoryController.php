@@ -28,6 +28,10 @@ class CategoryController extends Controller
     {
         $model = new Category();
 
+        if ($model->image == null || $model->image == '') {
+            $model->image = 'noimage.png';
+        }
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('success', 'Thêm danh mục thành công!');
             return $this->redirect(['index']);

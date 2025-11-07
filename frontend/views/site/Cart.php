@@ -19,127 +19,184 @@ $ship = 15000;
         <h3 class="mb-3 fw-bold text-center"><?= Html::encode($this->title) ?></h3>
 
         <!-- Tabs giao hàng -->
-        <ul class="nav nav-pills mb-3" id="deliveryTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="ship-tab" data-bs-toggle="pill" data-bs-target="#ship" type="button"
-                    role="tab">
-                    Giao hàng tận nơi
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="store-tab" data-bs-toggle="pill" data-bs-target="#store" type="button"
-                    role="tab">
-                    Nhận tại cửa hàng
-                </button>
-            </li>
-        </ul>
+        <form action="<?= Url::to(['cart/checkout']) ?>" method="post">
+            <?= Html::hiddenInput(Yii::$app->request->csrfParam, Yii::$app->request->csrfToken) ?>
 
-        <div class="tab-content mb-4" id="deliveryTabsContent">
-            <!-- Tab 1: Giao hàng tận nơi -->
-            <div class="tab-pane fade show active" id="ship" role="tabpanel">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <label class="form-label fw-semibold">Giới tính</label><br>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="gender" id="male" checked>
-                            <label class="form-check-label" for="male">Anh</label>
+            <input type="hidden" name="delivery_type" id="delivery_type" value="delivery">
+
+            <ul class="nav nav-pills mb-3" id="deliveryTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="ship-tab" data-bs-toggle="pill" data-bs-target="#ship" type="button"
+                        role="tab" value="delivery">
+                        Giao hàng tận nơi
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="store-tab" data-bs-toggle="pill" data-bs-target="#store" type="button"
+                        role="tab" value="store">
+                        Nhận tại cửa hàng
+                    </button>
+                </li>
+            </ul>
+            <!-- đọc delivery type -->
+            <script>
+                document.querySelectorAll('#deliveryTabs button').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.getElementById('delivery_type').value = btn.value;
+                    });
+                });
+            </script>
+
+            <div class="tab-content mb-4" id="deliveryTabsContent">
+                <!-- Tab 1: Giao hàng tận nơi -->
+                <div class="tab-pane fade show active" id="ship" role="tabpanel">
+                    <div class="row g-3 m-3">
+                        <div id="address-field" class="mb-3">
+                            <label>Địa chỉ giao hàng</label>
+                            <input type="text" name="address" class="form-control mt-2" placeholder="Nhập địa chỉ nhận hàng...">
                         </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="gender" id="female">
-                            <label class="form-check-label" for="female">Chị</label>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Giới tính</label><br>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="gender" id="male" checked>
+                                <label class="form-check-label" for="male">Anh</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="gender" id="female">
+                                <label class="form-check-label" for="female">Chị</label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label fw-semibold">Tên người nhận</label>
-                        <input type="text" class="form-control" placeholder="Nhập tên người nhận"
-                            value="<?= $user ? Html::encode($user->fullname ?? $user->username) : '' ?>" readonly>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-semibold">Số điện thoại</label>
-                        <input type="text" class="form-control" placeholder="Nhập số điện thoại"
-                            value="<?= $user ? Html::encode($user->phone ?? '') : '' ?>" readonly>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label fw-semibold">Phí giao hàng</label>
-                        <input type="text" class="form-control" value="15.000đ" readonly>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Tên người nhận</label>
+                            <input type="text" class="form-control" placeholder="Nhập tên người nhận"
+                                value="<?= $user ? Html::encode($user->fullname ?? $user->username) : '' ?>">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Số điện thoại</label>
+                            <input type="text" class="form-control" placeholder="Nhập số điện thoại"
+                                value="<?= $user ? Html::encode($user->phone ?? '') : '' ?>">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Phí giao hàng</label>
+                            <input type="text" class="form-control" value="15.000đ" readonly>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Hình thức thanh toán</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment" id="payment-cod" value="cod" checked>
+                                <label class="form-check-label" for="payment-cod">Tiền mặt khi nhận hàng (COD)</label>
+                            </div>
+                            <div class="form-check mt-1">
+                                <input class="form-check-input" type="radio" name="payment" id="payment-bank" value="bank">
+                                <label class="form-check-label" for="payment-bank">Chuyển khoản</label>
+                            </div>
+
+                            <!-- Thông tin chuyển khoản hiện khi chọn 'bank' -->
+                            <div id="bank-info" class="mt-2 small text-muted d-none">
+                                <div>Ngân hàng: <strong>Ngân hàng ABC</strong></div>
+                                <div>Chủ TK: <strong>Công ty VEGETABLE</strong></div>
+                                <div>Số TK: <strong>0123456789</strong></div>
+                                <div class="form-text">Ghi chú chuyển khoản: <strong>ORDER-{order_code}</strong></div>
+                            </div>
+                            <script>
+                                (function() {
+                                    var els = document.querySelectorAll('input[name=\"payment\"]');
+
+                                    function updateBankInfo() {
+                                        var sel = document.querySelector('input[name=\"payment\"]:checked');
+                                        var el = document.getElementById('bank-info');
+                                        if (sel && sel.value === 'bank') el.classList.remove('d-none');
+                                        else el.classList.add('d-none');
+                                    }
+                                    els.forEach(function(i) {
+                                        i.addEventListener('change', updateBankInfo);
+                                    });
+                                    updateBankInfo();
+                                })();
+                            </script>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Tab 2: Nhận tại cửa hàng -->
-            <div class="tab-pane fade" id="store" role="tabpanel">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Chọn cửa hàng nhận hàng</label>
-                        <select class="form-select">
-                            <option>BHX Thủ Đức (Ngã 4 Bình Thái)</option>
-                            <option>BHX Quận 9 (Đỗ Xuân Hợp)</option>
-                            <option>BHX Quận 7 (Huỳnh Tấn Phát)</option>
-                        </select>
+                <!-- Tab 2: Nhận tại cửa hàng -->
+
+                <div class="tab-pane fade mt-2 p-2" id="store" role="tabpanel">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Chọn cửa hàng nhận hàng</label>
+                            <select class="form-select" name="store_name">
+                                <option value="BHX Thủ Đức (Ngã 4 Bình Thái)">BHX Thủ Đức (Ngã 4 Bình Thái)</option>
+                                <option value="BHX Quận 9 (Đỗ Xuân Hợp)">BHX Quận 9 (Đỗ Xuân Hợp)</option>
+                                <option value="BHX Quận 7 (Huỳnh Tấn Phát)">BHX Quận 7 (Huỳnh Tấn Phát)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Danh sách sản phẩm -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-success text-white fw-bold">
-                Đơn hàng của bạn
-            </div>
-            <div class="card-body p-0">
-                <table class="table align-middle mb-0">
-                    <tbody>
-                        <?php foreach ($cart as $item): ?>
-                            <?php
-                            $subtotal = $item['price'] * $item['quantity'];
-                            $total += $subtotal;
-                            ?>
-                            <tr>
-                                <td style="width:80px;">
-                                    <img src="<?= Yii::getAlias('@web/uploads/' . Html::encode($item['image'])) ?>" width="70"
-                                        class="rounded">
 
-                                </td>
-                                <td>
-                                    <div class="fw-semibold"><?= Html::encode($item['name']) ?></div>
-                                    <div class="text-muted small">
-                                        Giá: <?= number_format($item['price'], 0, ',', '.') ?>đ
-                                    </div>
-                                    <a href="#" class="text-danger small remove-item" data-id="<?= $item['id'] ?>">
-                                        Xóa
-                                    </a>
-                                </td>
-                                <td class="text-end ">
-                                    <div class="input-group input-group-sm justify-content-end" style="max-width:110px;">
-                                        <button class="btn btn-outline-secondary btn-minus"
-                                            data-id="<?= $item['id'] ?>">−</button>
-                                        <input type="text" class="form-control text-center quantity-input"
-                                            value="<?= $item['quantity'] ?>" readonly>
-                                        <button class="btn btn-outline-secondary btn-plus"
-                                            data-id="<?= $item['id'] ?>">＋</button>
-                                    </div>
-                                </td>
-                                <td class="text-end fw-bold subtotal" data-price="<?= $item['price'] ?>">
-                                    <?= number_format($subtotal, 0, ',', '.') ?>đ
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+                <!-- Danh sách sản phẩm -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-success text-white fw-bold">
+                        Đơn hàng của bạn
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table align-middle mb-0">
+                            <tbody>
+                                <?php foreach ($cart as $item): ?>
+                                    <?php
+                                    $subtotal = $item['price'] * $item['quantity'];
+                                    $total += $subtotal;
+                                    ?>
+                                    <tr>
+                                        <td style="width:80px;">
+                                            <img src="<?= Yii::getAlias('@web/uploads/' . Html::encode($item['image'])) ?>" width="70"
+                                                class="rounded">
 
-            </div>
-        </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-semibold"><?= Html::encode($item['name']) ?></div>
+                                            <div class="text-muted small">
+                                                Giá: <?= number_format($item['price'], 0, ',', '.') ?>đ
+                                            </div>
+                                            <a href="#" class="text-danger small remove-item" data-id="<?= $item['id'] ?>">
+                                                Xóa
+                                            </a>
+                                        </td>
+                                        <td class="text-end ">
+                                            <div class="input-group input-group-sm justify-content-end" style="max-width:110px;">
+                                                <button class="btn btn-outline-secondary btn-minus" type="button"
+                                                    data-id="<?= $item['id'] ?>">−</button>
+                                                <input type="text" class="form-control text-center quantity-input"
+                                                    value="<?= $item['quantity'] ?>" readonly>
+                                                <button class="btn btn-outline-secondary btn-plus" type="button"
+                                                    data-id="<?= $item['id'] ?>">＋</button>
+                                            </div>
+                                        </td>
+                                        <td class="text-end fw-bold subtotal" data-price="<?= $item['price'] ?>">
+                                            <?= number_format($subtotal, 0, ',', '.') ?>đ
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
 
-        <!-- Tổng tiền & Đặt hàng -->
-        <div class="d-flex justify-content-between align-items-center bg-light border-top py-3 px-4">
-            <div class="fw-bold fs-5 text-success">
-                Tổng cộng:
-                <span id="cart-total"><?= number_format($total, 0, ',', '.') ?>đ</span>
-            </div>
-            <button class="btn btn-success px-5 py-2 fw-bold text-uppercase">
-                <i class="bi bi-cart-check"></i> Đặt hàng
-            </button>
-        </div>
+                    </div>
+                </div>
+
+                <!-- Tổng tiền & Đặt hàng -->
+                <div class="d-flex justify-content-between align-items-center bg-light border-top py-3 px-4">
+                    <div class="fw-bold fs-5 text-success">
+                        Tổng cộng:
+                        <span id="cart-total"><?= number_format($total, 0, ',', '.') ?>đ</span>
+                    </div>
+                    <!-- <button class="btn btn-success px-5 py-2 fw-bold text-uppercase">
+                    <i class="bi bi-cart-check"></i> Đặt hàng
+                </button> -->
+                    <button type="submit" class="btn btn-success px-5 py-2 fw-bold text-uppercase">
+                        <i class="bi bi-cart-check"></i> Đặt hàng
+                    </button>
+                </div>
+        </form>
     <?php else: ?>
         <div class="container py-2">
             <div class="d-flex align-items-center mb-3">
@@ -259,7 +316,8 @@ function updateTotal(ship = 15000) {
 // }
 //+ - số luong
 
-$(document).on('click', '.btn-plus, .btn-minus', function() {
+$(document).on('click', '.btn-plus, .btn-minus', function(e) {
+     e.preventDefault();
     const id = $(this).data('id');
     const type = $(this).hasClass('btn-plus') ? 'plus' : 'minus';
     const row = $(this).closest('tr');

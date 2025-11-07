@@ -108,7 +108,7 @@ $this->registerJsFile('@web/js/cart.js', [
                         <?php endif; ?>
 
                         <?php if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role == 0): ?>
-                            <li class="nav-item text-white"><a class="nav-link" href="http://localhost:8000/" target="_blank">Admin</a></li>
+                            <li class="nav-item"><a class="nav-link" href="http://localhost:8000/" target="_blank">Admin</a></li>
                         <?php endif; ?>
                     </ul>
                 </div>
@@ -137,8 +137,7 @@ $this->registerJsFile('@web/js/cart.js', [
 
 
         <?php if (Yii::$app->session->hasFlash('success')): ?>
-            <?php $msg = Yii::$app->session->getFlash('success'); ?>
-            <div class="modal fade" id="globalFlashModal" tabindex="-1" aria-hidden="true">
+            <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content shadow-lg border-0">
                         <div class="modal-header bg-success text-white">
@@ -146,24 +145,21 @@ $this->registerJsFile('@web/js/cart.js', [
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body text-center p-4">
-                            <?= \yii\helpers\Html::tag('div', \yii\helpers\Html::encode($msg), ['class' => 'fw-semibold fs-5 text-success mb-2']) ?>
+                            <h4 class="text-success mb-3">🎉 Đăng ký thành công!</h4>
+                            <p>Bạn có thể đăng nhập để trải nghiệm hệ thống ngay.</p>
                         </div>
                         <div class="modal-footer">
+                            <a href="<?= \yii\helpers\Url::to(['site/login']) ?>" class="btn btn-success">Đăng nhập</a>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <?php
-            $this->registerJs(
-                <<<'JS'
-            (function(){
-                var el = document.getElementById('globalFlashModal');
-                if(el) new bootstrap.Modal(el).show();
-            })();
-            JS
-            );
-            ?>
+
+            <script>
+                var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                successModal.show();
+            </script>
         <?php endif; ?>
 
 
