@@ -30,14 +30,14 @@ class Review extends ActiveRecord
 
     public function rules()
     {
-        // return [
-        //     [['rating', 'comment', 'review_name', 'review_phone'], 'required'],
-        //     [['rating'], 'integer'],
-        //     [['comment'], 'string'],
-        //     [['review_name'], 'string', 'max' => 255],
-        //     [['review_phone'], 'string', 'max' => 20],
-        //     [['status'], 'default', 'value' => 0], // mặc định là chờ duyệt
-        // ];
+
+        return [
+            [['rating', 'comment', 'review_name', 'review_phone'], 'required'],
+            [['rating'], 'integer'],
+            [['review_name', 'comment'], 'string', 'max' => 255],
+            [['review_phone'], 'string', 'max' => 20],
+            [['status'], 'default', 'value' => 0],
+        ];
     }
 
     public function actionCreate($product_id)
@@ -62,8 +62,8 @@ class Review extends ActiveRecord
     {
         $this->rating = intval($this->rating);
         $this->user_id = Yii::$app->user->id;
-        $this->review_name = Yii::$app->user->identity->username;
-        $this->phone = Yii::$app->user->identity->phone;
+        $this->review_name = trim($this->review_name);
+        $this->review_phone = intval($this->review_phone);
         $this->comment = trim($this->comment);
 
 

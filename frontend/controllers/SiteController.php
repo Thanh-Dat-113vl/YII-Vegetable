@@ -375,8 +375,8 @@ class SiteController extends Controller
         $totalQty = array_sum(array_column($cart, 'quantity'));
         return [
             'success' => true,
-            'total' => $totalQty,           // tổng số lượng (nếu JS cần)
-            'cartCount' => count($cart)     // số sản phẩm khác nhau (distinct)
+            'total' => $totalQty,           // tổng số lượng 
+            'cartCount' => count($cart)     // số sản phẩm khác nhau
         ];
     }
 

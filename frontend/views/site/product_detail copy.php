@@ -160,3 +160,104 @@ use yii\helpers\Url;
             });
         });
     </script> -->
+
+
+
+
+    <!-- js  -->
+
+
+    <?php
+    // JS xử lý click star và giới hạn file
+    $this->registerJs(
+        <<<JS
+            (function(){
+                var stars = document.querySelectorAll('#star-wrapper .star');
+                var input = document.getElementById('review-rating');
+                var label = document.getElementById('star-label');
+        
+                stars.forEach(function(s){
+                    s.addEventListener('mouseenter', function(){ highlight(s.dataset.value); });
+                    s.addEventListener('mouseleave', function(){ setFromValue(); });
+                    s.addEventListener('click', function(){
+                        input.value = s.dataset.value;
+                        setFromValue();
+                    });
+                });
+        
+                function highlight(val){
+                    stars.forEach(function(s){ s.style.color = (s.dataset.value <= val ? '#ffb000' : '#e4e4e4'); });
+                }
+                function setFromValue(){
+                    const v = parseInt(input.value) || 0;
+                    const level = = {
+                        1: 'Rất tệ',
+                        2: 'Tệ',
+                        3: 'Bình thường',
+                        4: 'Tốt',
+                        5: 'Rất tốt'
+                    }
+                    stars.forEach(function(s){ s.style.color = (s.dataset.value <= v ? '#ffb000' : '#e4e4e4'); });
+                    label.textContent = v ? levels[v] : 'Chọn đánh giá';
+                }
+        
+                // giới hạn upload 3 ảnh
+                // var imgInput = document.getElementById('review-images');
+                // if(imgInput){
+                //     imgInput.addEventListener('change', function(){
+                //         if(this.files.length > 3){
+                //             alert('Chỉ được gửi tối đa 3 ảnh');
+                //             this.value = '';
+                //         }
+                //     });
+                // }
+        
+            })();
+        JS
+    );
+
+    $this->registerJs(
+        <<<JS
+        (function(){
+            var ratingInput = document.getElementById('review-rating');
+            var nameInput = document.querySelector('input[name="review_name"]');
+            var phoneInput = document.querySelector('input[name="review_phone"]');
+            var policy = document.getElementById('policyCheck');
+            var submitBtn = document.getElementById('submit-review-btn');
+        
+            function validPhone(v){
+                if(!v) return false;
+                v = v.replace(/[^0-9+]/g, '');
+                return /^\+?\d{7,15}$/.test(v);
+            }
+        
+            function checkEnable(){
+                var r = parseInt(ratingInput.value) || 0;
+                var nameOk = nameInput && nameInput.value.trim().length > 0;
+                var phoneOk = phoneInput && validPhone(phoneInput.value.trim());
+                var policyOk = policy && policy.checked;
+                if(r && nameOk && phoneOk && policyOk){
+                    submitBtn.disabled = false;
+                } else {
+                    submitBtn.disabled = true;
+                }
+            }
+        
+            if(nameInput) nameInput.addEventListener('input', checkEnable);
+            if(phoneInput) phoneInput.addEventListener('input', checkEnable);
+            if(policy) policy.addEventListener('change', checkEnable);
+            if(ratingInput) ratingInput.addEventListener('change', checkEnable);
+        
+            // khi user click star -> kích hoạt kiểm tra
+            document.body.addEventListener('click', function(e){
+                if(e.target && e.target.classList && e.target.classList.contains('star')){
+                    setTimeout(checkEnable, 50);
+                }
+            });
+    
+            // khởi tạo trạng thái nút
+            checkEnable();
+        })();
+        JS
+    );
+    ?>

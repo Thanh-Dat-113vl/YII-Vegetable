@@ -7,6 +7,9 @@ use yii\widgets\ActiveForm;
 
 $this->title = "Chi tiết sản phẩm";
 
+$this->registerJsFile('@web/js/rating.js', ['depends' => [\yii\web\JqueryAsset::class]]);
+
+
 ?>
 
 
@@ -83,31 +86,33 @@ $this->title = "Chi tiết sản phẩm";
 
     <!-- Reviews -->
     <div class="mt-4 bg-light p-4 rounded-3">
-        <h5>Đánh giá (<?= count($reviews ?? []) ?>)</h5>
+        <h5>Đánh giá (<?= count($review ?? []) ?>)</h5>
 
-        <?php if (!empty($reviews)): ?>
+        <?php if (!empty($review)): ?>
             <div class="list-group mb-3">
-                <?php foreach ($reviews as $r): ?>
-                    <div class="list-group-item">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <strong><?= Html::encode($r->user->username ?? 'Người dùng') ?></strong>
-                                <div class="small text-muted"><?= Yii::$app->formatter->asDatetime($r->created_at) ?></div>
+                <?php foreach ($review as $r): ?>
+                    <?php if ($r->status == 1): ?>
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <strong><?= Html::encode($r->user->username ?? 'Người dùng') ?></strong>
+                                    <div class="small text-muted"><?= Yii::$app->formatter->asDatetime($r->created_at) ?></div>
+                                </div>
+                                <div class="text-end">
+                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                        <?php if ($i <= $r->rating): ?>
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                        <?php else: ?>
+                                            <i class="bi bi-star text-secondary"></i>
+                                        <?php endif; ?>
+                                    <?php endfor; ?>
+                                </div>
                             </div>
-                            <div class="text-end">
-                                <?php for ($i = 1; $i <= 5; $i++): ?>
-                                    <?php if ($i <= $r->rating): ?>
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                    <?php else: ?>
-                                        <i class="bi bi-star text-secondary"></i>
-                                    <?php endif; ?>
-                                <?php endfor; ?>
-                            </div>
+                            <?php if ($r->comment): ?>
+                                <p class="mt-2 mb-0"><?= Html::encode($r->comment) ?></p>
+                            <?php endif; ?>
                         </div>
-                        <?php if ($r->comment): ?>
-                            <p class="mt-2 mb-0"><?= Html::encode($r->comment) ?></p>
-                        <?php endif; ?>
-                    </div>
+                    <?php endif; ?>
                 <?php endforeach; ?>
             </div>
         <?php else: ?>
@@ -126,7 +131,7 @@ $this->title = "Chi tiết sản phẩm";
             <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content">
-                        <form id="review-modal-form" method="post"
+                        <form id="review-modal-form" method="POST"
                             action="<?= Url::to(['review/create', 'product_id' => $product->id]) ?>" enctype="multipart/form-data">
                             <?= Html::hiddenInput(Yii::$app->request->csrfParam, Yii::$app->request->csrfToken) ?>
                             <div class="modal-header">
@@ -161,11 +166,13 @@ $this->title = "Chi tiết sản phẩm";
                                 <!-- thông tin người đánh giá -->
                                 <div class="row g-2 mb-2">
                                     <div class="col">
-                                        <input type="text" name="review_name" class="form-control"
+                                        <label type="text">Họ tên:</label>
+                                        <input type="text" name="Review[review_name]" class="form-control"
                                             placeholder="Họ tên (bắt buộc)">
                                     </div>
                                     <div class="col">
-                                        <input type="text" name="review_phone" class="form-control"
+                                        <label type="text">Số điện thoại:</label>
+                                        <input type="text" name="Review[review_phone]" class="form-control"
                                             placeholder="Số điện thoại (bắt buộc)">
                                     </div>
                                 </div>
@@ -185,194 +192,7 @@ $this->title = "Chi tiết sản phẩm";
                     </div>
                 </div>
             </div>
-
-            <?php
-            // JS xử lý click star và giới hạn file
-            $this->registerJs(
-                <<<JS
-            (function(){
-                var stars = document.querySelectorAll('#star-wrapper .star');
-                var input = document.getElementById('review-rating');
-                var label = document.getElementById('star-label');
-        
-                stars.forEach(function(s){
-                    s.addEventListener('mouseenter', function(){ highlight(s.dataset.value); });
-                    s.addEventListener('mouseleave', function(){ setFromValue(); });
-                    s.addEventListener('click', function(){
-                        input.value = s.dataset.value;
-                        setFromValue();
-                    });
-                });
-        
-                function highlight(val){
-                    stars.forEach(function(s){ s.style.color = (s.dataset.value <= val ? '#ffb000' : '#e4e4e4'); });
-                }
-                function setFromValue(){
-                    var v = parseInt(input.value) || 0;
-                    stars.forEach(function(s){ s.style.color = (s.dataset.value <= v ? '#ffb000' : '#e4e4e4'); });
-                    label.textContent = v ? (v + ' sao') : 'Chọn đánh giá';
-                }
-        
-                // giới hạn upload 3 ảnh
-                // var imgInput = document.getElementById('review-images');
-                // if(imgInput){
-                //     imgInput.addEventListener('change', function(){
-                //         if(this.files.length > 3){
-                //             alert('Chỉ được gửi tối đa 3 ảnh');
-                //             this.value = '';
-                //         }
-                //     });
-                // }
-        
-            })();
-        JS
-            );
-
-            $this->registerJs(
-                <<<JS
-        (function(){
-            var ratingInput = document.getElementById('review-rating');
-            var nameInput = document.querySelector('input[name="review_name"]');
-            var phoneInput = document.querySelector('input[name="review_phone"]');
-            var policy = document.getElementById('policyCheck');
-            var submitBtn = document.getElementById('submit-review-btn');
-        
-            function validPhone(v){
-                if(!v) return false;
-                v = v.replace(/[^0-9+]/g, '');
-                return /^\+?\d{7,15}$/.test(v);
-            }
-        
-            function checkEnable(){
-                var r = parseInt(ratingInput.value) || 0;
-                var nameOk = nameInput && nameInput.value.trim().length > 0;
-                var phoneOk = phoneInput && validPhone(phoneInput.value.trim());
-                var policyOk = policy && policy.checked;
-                if(r && nameOk && phoneOk && policyOk){
-                    submitBtn.disabled = false;
-                } else {
-                    submitBtn.disabled = true;
-                }
-            }
-        
-            if(nameInput) nameInput.addEventListener('input', checkEnable);
-            if(phoneInput) phoneInput.addEventListener('input', checkEnable);
-            if(policy) policy.addEventListener('change', checkEnable);
-            if(ratingInput) ratingInput.addEventListener('change', checkEnable);
-        
-            // khi user click star -> kích hoạt kiểm tra
-            document.body.addEventListener('click', function(e){
-                if(e.target && e.target.classList && e.target.classList.contains('star')){
-                    setTimeout(checkEnable, 50);
-                }
-            });
-        
-            // khởi tạo trạng thái nút
-            checkEnable();
-        })();
-        JS
-            );
-            ?>
+            <!--  -->
         <?php endif; ?>
     </div>
 </div>
-
-<?php
-// thêm JS AJAX submit (đặt sau các script hiện có)
-$ajaxJs = <<<JS
-(function(){
-    var form = document.getElementById('review-modal-form');
-    if(!form) return;
-
-    form.addEventListener('submit', function(e){
-        e.preventDefault();
-        var btn = form.querySelector('button[type=submit]');
-        btn.disabled = true;
-        btn.textContent = 'Đang gửi...';
-
-        var data = new FormData(form);
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', form.getAttribute('action'), true);
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        xhr.onload = function(){
-            btn.disabled = false;
-            btn.textContent = 'Gửi đánh giá';
-            if(xhr.status === 200){
-                try {
-                    var res = JSON.parse(xhr.responseText);
-                } catch (e){
-                    alert('Lỗi phản hồi từ server');
-                    return;
-                }
-                if(res.success){
-                    // đóng modal
-                    var modalEl = document.getElementById('reviewModal');
-                    var bsModal = bootstrap.Modal.getInstance(modalEl);
-                    if(bsModal) bsModal.hide();
-
-                    // chèn review mới lên đầu list-group (nếu không tồn tại tạo mới)
-                    var listGroup = document.querySelector('.list-group');
-                    if(!listGroup){
-                        listGroup = document.createElement('div');
-                        listGroup.className = 'list-group mb-3';
-                        var reviewsWrapper = document.querySelector('.mt-4.bg-light.p-4.rounded-3');
-                        if(reviewsWrapper){
-                            // insert before the "Viết đánh giá" button block
-                            var ref = reviewsWrapper.querySelector('button[data-bs-toggle="modal"]');
-                            if(ref) ref.parentNode.insertBefore(listGroup, ref);
-                            else reviewsWrapper.appendChild(listGroup);
-                        } else {
-                            document.querySelector('body').appendChild(listGroup);
-                        }
-                    }
-
-                    var item = document.createElement('div');
-                    item.className = 'list-group-item';
-                    item.innerHTML = '<div class="d-flex justify-content-between"><div><strong>' + (res.review.username || 'Người dùng') + '</strong><div class="small text-muted">' + (res.review.created_at || '') + '</div></div><div class="text-end"></div></div>' + (res.review.comment ? '<p class="mt-2 mb-0">' + res.review.comment + '</p>' : '');
-                    // stars
-                    var stars = '';
-                    for(var i=1;i<=5;i++){
-                        if(i<=res.review.rating) stars += '<i class="bi bi-star-fill text-warning"></i>';
-                        else stars += '<i class="bi bi-star text-secondary"></i>';
-                    }
-                    item.querySelector('.text-end').innerHTML = stars;
-                    listGroup.insertBefore(item, listGroup.firstChild);
-
-                    // show toast/flash
-                    var toast = new bootstrap.Toast(document.getElementById('cartToast') || document.createElement('div'));
-                    if(document.getElementById('cartToast')) {
-                        document.getElementById('cartToastBody').textContent = 'Cảm ơn đánh giá của bạn.';
-                        bootstrap.Toast.getOrCreateInstance(document.getElementById('cartToast')).show();
-                    } else {
-                        alert('Cảm ơn đánh giá của bạn.');
-                    }
-
-                    // reset form
-                    form.reset();
-                    document.getElementById('review-rating').value = '';
-                    // update count
-                    var h5 = document.querySelector('h5:contains("Đánh giá")') || document.querySelector('.mt-4.bg-light.p-4.rounded-3 h5');
-                    if(h5){
-                        // try parse count from "Đánh giá (N)"
-                        var m = h5.textContent.match(/(\\d+)/);
-                        if(m) h5.textContent = 'Đánh giá (' + (parseInt(m[1]) + 1) + ')';
-                    }
-                } else {
-                    if(res.errors){
-                        var msg = [];
-                        for(var k in res.errors) msg.push(res.errors[k].join(', '));
-                        alert('Lỗi: ' + msg.join('\\n'));
-                    } else {
-                        alert(res.message || 'Gửi thất bại');
-                    }
-                }
-            } else {
-                alert('Lỗi server: ' + xhr.status);
-            }
-        };
-        xhr.send(data);
-    }, false);
-})();
-JS;
-$this->registerJs($ajaxJs);
-?>

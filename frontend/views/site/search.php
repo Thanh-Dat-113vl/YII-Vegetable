@@ -25,53 +25,60 @@ $this->title = "Tìm kiếm: " . Html::encode($keyword);
 
     </div>
     <div class="container">
-        <div class="row g-3">
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3">
             <!-- g-3 tạo khoảng cách giữa các card -->
             <?= ListView::widget([
                 'dataProvider' => $dataProvider,
                 'options' => ['class' => 'row g-3'],
                 // 'itemOptions' => ['class' => 'col-lg-3 custom-width'],
-                'itemOptions' => ['class' => 'card '],
+                'itemOptions' => ['tag' => false],
 
                 'itemView' => function ($model, $key, $index, $widget) {
-                    $priceSaleValue = $model->price * (100 - $model->discount) / 100;
+                    $priceSaleValue = (float)$model->price * (100 - $model->discount) / 100;
                     $priceSale = Yii::$app->formatter->asDecimal($priceSaleValue, 0) . '₫';
                     $priceOrigin = Yii::$app->formatter->asDecimal($model->price, 0) . '₫';
                     $url = Url::to(['site/product-detail', 'id' => $model->id]);
-
+                    $unit = $model->unit;
                     $img = Html::encode($model->image);
                     $name = Html::encode($model->name);
 
-                    // stars (simple)
-                    $fullStars = floor($model->rating);
-                    $halfStar  = ($model->rating - $fullStars >= 0.5) ? 1 : 0;
-                    $emptyStars = 5 - $fullStars - $halfStar;
-                    $starsHtml = str_repeat('<i class="fa fa-star"></i>', $fullStars);
-                    if ($halfStar) $starsHtml .= '<i class="fa fa-star-half-o"></i>';
-                    $starsHtml .= str_repeat('<i class="fa fa-star-o"></i>', $emptyStars);
-
                     $stockButton = $model->stock > 0
-                        ? '<button type="button" class="add-to-cart-btn btn btn-outline-success mt-auto w-100" data-id="' . $model->id . '" data-name="' . $name . '" data-price="' . htmlspecialchars($priceSaleValue) . '" data-image="' . $img . '"><i class="bi bi-cart-plus"></i> Mua</button>'
-                        : '<div class="text-center mt-auto text-body-tertiary text-bord text-uppercase fs-6">TẠM HẾT HÀNG</div>';
+                        ? '<button class="add-to-cart-btn btn btn-success rounded-pill w-100 fw-medium py-2 mt-2">
+               <i class="bi bi-cart-plus"></i> Mua
+           </button>'
+                        : '<div class="text-center text-muted fw-bold text-uppercase fs-6 mt-3">Hết hàng</div>';
+
+                    $priceDiscount = $model->discount > 0
+                        ? '<div class="d-flex justify-content-center align-items-center">
+                        <span class="text-muted text-decoration-line-through me-2" style="font-size:12px;">' . $priceOrigin . '</span>
+                        <span class="badge bg-danger text-white fw-bold">-' . $model->discount . ''
+                        . '%</span>
+                    </div>'
+                        : '';
 
                     return '
-                    <div class="card product-card shadow-sm flex-fill h-100 border-0 d-flex flex-column">
-                        <a href="' . $url . '" class="text-decoration-none text-dark">
-                            <div class="position-relative">
-                                <img src="/uploads/' . $img . '" class="card-img-top p-3" style="height:220px;object-fit:contain;" alt="' . $name . '">
-                            </div>
-                            <div class="card-body d-flex flex-column text-center">
-                                <h6 class="card-title text-truncate mb-2" title="' . $name . '" style="font-size:14px; min-height:40px; font-weight:600;">' . $name . '</h6>
-                                <p class="text-danger fw-bold mb-1" style="font-size:16px;">' . $priceSale . '</p>
-                                <div class="d-flex justify-content-center align-items-center mb-3">
-                                    <span class="text-decoration-line-through me-2" style="color:#9DA7BC; font-size:12px;">' . $priceOrigin . '</span>
-                                    <span class="fw-bold text-white text-center d-inline-block" style="min-width:36px; border-radius:4px; background-color:rgba(255,1,1,0.8); padding:2px 6px; font-size:11px;">-' . $model->discount . '%</span>
+    <div class="col d-flex">
+        <div class="card product-card shadow-sm w-100 d-flex flex-column">
+
+         <a href="' . $url . '" class="text-decoration-none text-dark">
+                          <img src="/uploads/' . $img . '" alt="' . $name . '"  class="card-img-top" style="height:180px;object-fit:contain;" alt="<?= Html::encode($name) ?>">
+                            <div class="card-body d-flex flex-column">
+                                <h6 class="card-title text-truncate mb-2" title="<?= Html::encode($name) ?>" style="font-size:16px; min-height:40px; font-weight:600;">' . $name . '</h6>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class=" fw-bold " style="font-size:15px;">
+                                       ' . $priceSaleValue . '₫
+                                        <small class="text-muted">/' . $unit . '</small>
+                                    </div>
                                 </div>
+                                ' . $priceDiscount . '
                             </div>
                         </a>
-                        <div class="px-3 pb-3 mt-auto">' . $stockButton . '</div>
+                ' . $stockButton . '
+                        </div>
                     </div>';
                 },
+
                 'layout' => "{items}\n<div class='col-12'>{pager}</div>",
             ]); ?>
         </div>

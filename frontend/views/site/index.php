@@ -52,8 +52,14 @@ $this->title = "Trang chủ";
                             $image = is_object($c) ? $c->image : $c['image'];
                         ?>
                             <div class="text-center p-2" style="width:90px;">
-                                <img src="<?= $image ?>" alt="<?= Html::encode($name) ?>" class="mb-2" style="width:48px; height:48px;">
-                                <div class="small fw-medium text-truncate"><?= Html::encode($name) ?></div>
+                                <a href="<?= Url::to(['site/search', 'keyword' => $name]) ?>"
+                                    class="text-decoration-none small fw-medium text-truncate d-block category-link text-black"
+                                    title="<?= Html::encode($name) ?>">
+                                    <!-- <img src="<?= $image ?>" alt="<?= Html::encode($name) ?>"
+                                        class="mb-2 rounded-circle shadow-sm"
+                                        style="width:48px; height:48px; object-fit:cover;"> -->
+                                    <div><?= Html::encode($name) ?></div>
+                                </a>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -73,10 +79,8 @@ $this->title = "Trang chủ";
         </button>
     </div>
 
-
-
     <!-- PRODUCTS -->
-    <h2 class="mb-3">Sản phẩm nổi bật</h2>
+    <h2 class="m-3">Sản phẩm nổi bật</h2>
     <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3">
         <?php if (!empty($products)): foreach ($products as $p):
                 // hỗ trợ object hoặc array

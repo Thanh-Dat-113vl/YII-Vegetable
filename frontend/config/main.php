@@ -18,11 +18,7 @@ return [
             'thousandSeparator' => '.',
             'currencyCode' => 'VND',
         ],
-        // 'user' => [
-        //     'identityClass' => 'common\models\User',
-        //     'enableAutoLogin' => true,
-        //     'identityCookie' => ['username' => '_frontendUser', 'httpOnly' => true],
-        // ],
+
         'request' => [
             'csrfParam' => '_csrf-frontend',
         ],
