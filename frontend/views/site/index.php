@@ -37,6 +37,8 @@ $this->title = "Trang chủ";
         <div class="carousel-indicators"></div>
     </div>
 
+
+
     <!-- FEATURES -->
     <div id="categoryCarousel" class="carousel slide bg-white rounded-3 p-3" data-bs-ride="carousel">
         <div class="carousel-inner">
