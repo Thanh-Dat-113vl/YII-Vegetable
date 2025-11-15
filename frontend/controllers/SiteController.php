@@ -19,6 +19,9 @@ use frontend\models\ContactForm;
 use yii\web\NotFoundHttpException;
 use common\models\Category;
 use common\models\Review;
+use yii\data\ActiveDataProvider;
+
+use common\models\Orders;
 
 
 /**
@@ -399,5 +402,43 @@ class SiteController extends Controller
                 'user' => $user,
             ]
         );
+    }
+    public function actionPuhistory()
+    {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(['site/login']);
+        }
+
+        $userId = Yii::$app->user->id;
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => Orders::find()
+                ->where(['user_id' => $userId])
+                ->orderBy(['created_at' => SORT_DESC]),
+            'pagination' => ['pageSize' => 10],
+        ]);
+
+        return $this->render('puhistory', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+    public function actionOrderDetail($id)
+    {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(['site/login']);
+        }
+
+        $order = Orders::find()
+            ->where(['id' => $id, 'user_id' => Yii::$app->user->id])
+            ->with('items.product')
+            ->one();
+
+        if (!$order) {
+            throw new NotFoundHttpException('Không tìm thấy đơn hàng này.');
+        }
+
+        return $this->render('order-detail', [
+            'order' => $order,
+        ]);
     }
 }
