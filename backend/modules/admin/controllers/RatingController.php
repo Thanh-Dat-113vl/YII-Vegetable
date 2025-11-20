@@ -22,6 +22,8 @@ class RatingController extends Controller
     }
     public function actionView($id)
     {
+
+
         $model = Review::findOne($id);
         if (!$model) {
             throw new \yii\web\NotFoundHttpException('Đánh giá không tồn tại.');

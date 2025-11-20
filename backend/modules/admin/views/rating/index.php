@@ -1,12 +1,13 @@
 <?php
 
-use Soap\Url;
+
 use yii\helpers\Html;
 use yii\grid\GridView;
 
 /** @var yii\data\ActiveDataProvider $dataProvider */
 $this->title = 'Manager Ratings';
 ?>
+
 <div class="review-index">
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -15,7 +16,7 @@ $this->title = 'Manager Ratings';
         'columns' => [
             'id',
             [
-                'attribute' => 'product_id',
+                'attribute' => 'product name',
                 'value' => function ($model) {
                     return $model->product ? $model->product->name : 'N/A';
                 },
@@ -26,7 +27,13 @@ $this->title = 'Manager Ratings';
                     return $model->user ? $model->user->username : 'N/A';
                 },
             ],
-            'rating',
+            [
+                'attribute' => 'rating',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    return str_repeat('⭐', $model->rating);
+                },
+            ],
             'comment:ntext',
             [
                 'attribute' => 'status',

@@ -81,9 +81,9 @@ class Review extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'rating' => 'Đánh giá',
-            'comment' => 'Bình luận',
-            'created_at' => 'Ngày',
+            'rating' => 'Rating',
+            'comment' => 'Comment',
+            'created_at' => 'created at',
         ];
     }
 

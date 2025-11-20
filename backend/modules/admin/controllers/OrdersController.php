@@ -14,6 +14,13 @@ class OrdersController extends Controller
 {
     public function actionIndex()
     {
+        $search = Yii::$app->request->get('order_code');
+        $query = Orders::find();
+        if (!empty($search)) {
+            $query->andWhere(['like', 'order_code', $search]);
+        }
+
+
         $dataProvider = new ActiveDataProvider([
             'query' => Orders::find()->orderBy(['created_at' => SORT_DESC]),
             'pagination' => ['pageSize' => 20],
@@ -23,6 +30,7 @@ class OrdersController extends Controller
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
+            'search' => $search,
         ]);
     }
 

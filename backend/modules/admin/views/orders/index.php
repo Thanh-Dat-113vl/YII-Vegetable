@@ -17,9 +17,23 @@ $statusList = [
 ];
 ?>
 
+
+
 <div class="orders-index">
     <h1><?= Html::a($this->title) ?></h1>
 
+    <form class="row g-3 mb-3" method="get" action="<?= Url::to(['index']) ?>">
+        <div class="col-auto">
+            <input type="text" name="order_code" value="<?= Html::encode($search) ?>"
+                class="form-control form-control-sm"
+                placeholder="Tìm theo Mã đơn hàng">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-sm btn-success">
+                <i class="bi bi-search"></i> Tìm kiếm
+            </button>
+        </div>
+    </form>
     <?= yii\grid\GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
@@ -62,6 +76,8 @@ $statusList = [
                             'style' => $style,
                         ];
                     }
+                    $isLocked = in_array($model->status, ['completed', 'canceled']);
+
 
                     return Html::dropDownList(
                         'status',
@@ -70,6 +86,7 @@ $statusList = [
                         [
                             'class' => 'form-control',
                             'style' => $statusList[$model->status][1],
+                            'disabled' => $isLocked ? true : false,
                             'onchange' => "
                                 window.location.href = '"
                                 . \yii\helpers\Url::to(['change-status', 'id' => $model->id])
@@ -81,9 +98,16 @@ $statusList = [
                 }
             ],
 
-
-
-
             ['class' => 'yii\grid\ActionColumn'],
+        ],
+        'tableOptions' => ['class' => 'table table-bordered table-striped'],
+        'pager' => [
+            'class' => \yii\widgets\LinkPager::class,
+            'options' => ['class' => 'pagination justify-content-center'],
+            'linkContainerOptions' => ['class' => 'page-item'],
+            'linkOptions' => ['class' => 'page-link'],
+            'prevPageLabel' => '&laquo;',
+            'nextPageLabel' => '&raquo;',
+            'disabledListItemSubTagOptions' => ['class' => 'page-link disabled'],
         ],
     ]); ?>

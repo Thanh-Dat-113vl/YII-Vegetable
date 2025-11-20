@@ -26,8 +26,8 @@ $this->title = 'Manage Users Accounts';
                 <i class="bi bi-search"></i> Tìm kiếm
             </button>
         </div>
-
-        <!-- <p>
+    </form>
+    <!-- <p>
             <?= \yii\helpers\Html::a('📧 Test Mail', ['users/test-mail'], [
                 'class' => 'btn btn-primary',
                 'data-method' => 'post'
@@ -36,15 +36,15 @@ $this->title = 'Manage Users Accounts';
 
         </p> -->
 
-        <p>
-            <!-- <button type="button" class="btn btn-primary" id="btn-test-mail">
+    <p>
+        <!-- <button type="button" class="btn btn-primary" id="btn-test-mail">
         📧 Test Mail ok
     </button> -->
-        </p>
+    </p>
 
 
 
-    </form>
+
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
