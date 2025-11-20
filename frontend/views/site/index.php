@@ -101,7 +101,11 @@ $this->title = "Trang chủ";
                 <div class="col d-flex">
                     <div class="card product-card shadow-sm w-100 d-flex flex-column">
                         <a href="<?= Url::to(['product-detail', 'id' => $id]) ?>" class="text-decoration-none text-dark">
-                            <img src="<?= Yii::getAlias('@web/uploads/' . $image) ?>" class="card-img-top" style="height:180px;object-fit:cover;" alt="<?= Html::encode($name) ?>">
+                            <img
+                                src="<?= Url::to(['site/image', 'filename' => $image]) ?>"
+                                class="card-img-top"
+                                style="height:180px;object-fit:cover;"
+                                alt="<?= Html::encode($name) ?>">
                             <div class="card-body d-flex flex-column">
                                 <h6 class="card-title text-truncate mb-2" title="<?= Html::encode($name) ?>" style="font-size:16px; min-height:40px; font-weight:600;"><?= Html::encode($name) ?></h6>
 
@@ -117,6 +121,7 @@ $this->title = "Trang chủ";
                                         <div class="badge bg-danger text-white" style="font-size:11px; margin-top:4px;">-<?= $discount ?>%</div>
                                     </div>
                                 <?php endif; ?>
+
                             </div>
                         </a>
 

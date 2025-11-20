@@ -97,16 +97,30 @@ $this->registerJsFile('@web/js/cart.js', [
                                     Tài khoản (<?= Html::encode(Yii::$app->user->identity->username) ?>)
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
-                                    <li><?= Html::a('Hồ sơ', ['/site/profile'], ['class' => 'dropdown-item']) ?>
+                                    <li>
+                                        <?= Html::a(
+                                            'Hồ sơ',
+                                            ['/site/profile'],
+                                            ['class' => 'dropdown-item']
+                                        ) ?>
                                     </li>
-                                    <li href="<?= Url::to(['site/puhistory']) ?> ">
+
+                                    <li>
                                         <?= Html::a(
                                             'Lịch sử mua hàng',
                                             ['/site/puhistory'],
                                             ['class' => 'dropdown-item']
                                         ) ?>
                                     </li>
-                                    <li><?= Html::a('Đổi mật khẩu', ['/site/change-password'], ['class' => 'dropdown-item']) ?></li>
+
+                                    <li>
+                                        <?= Html::a(
+                                            'Đổi mật khẩu',
+                                            ['/site/reset-password'],
+                                            ['class' => 'dropdown-item']
+                                        ) ?>
+                                    </li>
+
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>

@@ -307,4 +307,9 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     {
         return $this->hasMany(Orders::class, ['user_id' => 'id']);
     }
+
+    public function getReviews()
+    {
+        return $this->hasMany(Review::class, ['user_id' => 'id']);
+    }
 }

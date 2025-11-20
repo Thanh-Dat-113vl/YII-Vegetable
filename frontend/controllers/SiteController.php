@@ -22,6 +22,7 @@ use common\models\Review;
 use yii\data\ActiveDataProvider;
 
 use common\models\Orders;
+use common\models\User;
 
 
 /**
@@ -267,24 +268,23 @@ class SiteController extends Controller
      * @return mixed
      * @throws BadRequestHttpException
      */
-    public function actionResetPassword($token)
+    public function actionResetPassword($token = null)
     {
-        try {
-            $model = new ResetPasswordForm($token);
-        } catch (InvalidArgumentException $e) {
-            throw new BadRequestHttpException($e->getMessage());
+        $user = User::findByPasswordResetToken($token);
+        if (!$user) {
+            throw new BadRequestHttpException('Token không hợp lệ hoặc đã hết hạn.');
         }
 
+
+        $model = new ResetPasswordForm($user);
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
-            Yii::$app->session->setFlash('success', 'New password saved.');
-
-            return $this->goHome();
+            Yii::$app->session->setFlash('success', 'Mật khẩu đã được thay đổi.');
+            return $this->redirect(['site/login']);
         }
 
-        return $this->render('resetPassword', [
-            'model' => $model,
-        ]);
+        return $this->render('resetPassword', ['model' => $model]);
     }
+
 
     /**
      * Verify email address
@@ -439,6 +439,43 @@ class SiteController extends Controller
 
         return $this->render('order-detail', [
             'order' => $order,
+        ]);
+    }
+
+    public function actionImage($filename)
+    {
+        $path = Yii::getAlias('@common/uploads/' . $filename);
+
+        if (file_exists($path)) {
+            return Yii::$app->response->sendFile($path, null, [
+                'inline' => true
+            ]);
+        }
+
+        throw new NotFoundHttpException("File not found.");
+    }
+
+    public function actionProfile($id = null)
+    {
+
+
+        $id = $id ?? Yii::$app->request->post('id');
+
+        if ($id === null) {
+            throw new \yii\web\BadRequestHttpException('Thiếu ID người dùng');
+        }
+
+        $model = User::findOne($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Cập nhật thông tin cá nhân thành công.');
+            return $this->refresh();
+        }
+
+        $user = Yii::$app->user->identity;
+
+        return $this->render('profile', [
+            'user' => $model,
         ]);
     }
 }

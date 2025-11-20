@@ -39,6 +39,7 @@ $this->title = "Tìm kiếm: " . Html::encode($keyword);
                 $unit = Html::encode($model->unit);
                 $img = Html::encode($model->image);
                 $name = Html::encode($model->name);
+                $urlImage = Url::to(['site/image', 'filename' => $img]);
 
                 $discountHtml = $model->discount > 0
                     ? '<div class="d-flex justify-content-center align-items-center mt-1 gap-1">
@@ -57,11 +58,13 @@ $this->title = "Tìm kiếm: " . Html::encode($keyword);
             <div class="card border-0 shadow-sm h-100 product-card">
                 <a href="' . $url . '" class="text-decoration-none text-dark">
                     <div class="image-box p-3">
-                        <img src="/uploads/' . $img . '" class="card-img-top" alt="' . $name . '">
+                        <img  src="' . $urlImage . ' " class="card-img-top" alt="' . $name . '">
                     </div>
                     <div class="card-body p-2 text-center">
                         <h6 class="card-title text-truncate mb-1 fw-semibold" style="font-size:15px;">' . $name . '</h6>
-                        <div class="text-danger fw-bold fs-6">' . $priceSale . '</div>
+                        <div class="text-danger fw-bold fs-6">' . $priceSale . ' 
+                        <small class="text-muted">/' . $unit . '</small>
+                        </div> 
                         ' . $discountHtml . '
                     </div>
                 </a>

@@ -51,16 +51,16 @@ class Orders extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'Mã đơn hàng',
-            'user_id' => 'Khách hàng',
-            'totalPrice' => 'Tổng tiền',
-            'status' => 'Trạng thái',
-            'payment_method' => 'Phương thức thanh toán',
-            'shipping_address' => 'Địa chỉ giao hàng',
-            'shipping_fee' => 'Phí vận chuyển',
-            'created_at' => 'Ngày tạo',
-            'updated_at' => 'Ngày cập nhật',
-            'order_code' => 'Mã đơn hàng',
+            'id' => 'STT',
+            'user_id' => 'Customer',
+            'totalPrice' => 'Total Price',
+            'status' => 'Status',
+            'payment_method' => 'Payment Method',
+            'shipping_address' => 'Address shipping',
+            'shipping_fee' => 'Shipping Fee',
+            'created_at' => 'Create date',
+            'updated_at' => 'Update date',
+            'order_code' => 'Order Code',
         ];
     }
 
